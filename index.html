@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刘泳希 · 健康日记</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f6f4f0;
+    --card: #ffffff;
+    --text: #2c2416;
+    --muted: #8c7b6d;
+    --accent: #5b8c5a;
+    --warn: #c4843e;
+    --danger: #c0504d;
+    --info: #4a5d8a;
+    --border: #e8e2d9;
+    --radius: 14px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 14px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .header { text-align: center; padding: 20px 0 6px; }
+  .header h1 { font-size: 1.55rem; font-weight: 700; letter-spacing: 0.5px; }
+  .header .sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+  .tabs {
+    display: flex; gap: 4px; margin: 14px 0;
+    background: var(--card); border-radius: var(--radius); padding: 4px;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1; text-align: center; padding: 9px 0; border-radius: 10px;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    color: var(--muted); transition: all 0.15s; border: none; background: none;
+  }
+  .tab.active { background: var(--accent); color: #fff; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .summary-row { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+  .summary-card {
+    flex: 1 1 70px; min-width: 65px; background: var(--card);
+    border-radius: var(--radius); padding: 12px 10px; text-align: center;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+  }
+  .summary-card .val { font-size: 1.35rem; font-weight: 700; line-height: 1.2; }
+  .summary-card .lbl { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+  .val.good { color: var(--accent); }
+  .val.warn { color: var(--warn); }
+  .val.danger { color: var(--danger); }
+
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    padding: 16px; margin-bottom: 14px;
+  }
+  .card h2 { font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 0.88rem; margin-bottom: 8px; color: var(--muted); font-weight: 600; }
+  .chart-wrap { position: relative; height: 200px; }
+  .chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+  .metric-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .metric-table th, .metric-table td {
+    padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .metric-table th { font-weight: 600; color: var(--muted); font-size: 0.72rem; letter-spacing: 0.5px; background: #faf9f7; }
+  .metric-table .status { font-weight: 600; }
+  .metric-table .en { font-size: 0.7rem; color: var(--muted); font-weight: 400; }
+  .status.high { color: var(--danger); }
+  .status.low { color: var(--warn); }
+  .status.ok { color: var(--accent); }
+
+  .day-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    margin-bottom: 16px; overflow: hidden;
+  }
+  .day-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: #faf9f7;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 4px;
+  }
+  .day-header .day-title { font-weight: 700; font-size: 0.95rem; }
+  .day-header .day-stats { font-size: 0.78rem; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+  .meal-block { padding: 10px 16px; border-bottom: 1px solid #f5f2ec; }
+  .meal-block:last-child { border-bottom: none; }
+  .meal-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: var(--muted); margin-bottom: 2px;
+  }
+  .meal-content { font-size: 0.9rem; }
+  .meal-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .tag {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    font-size: 0.7rem; margin-right: 3px; font-weight: 600;
+  }
+  .tag.good { background: #e6f0e5; color: #3d6b3a; }
+  .tag.warn { background: #fdf0e2; color: #b07028; }
+  .tag.danger { background: #fce8e7; color: #a8403d; }
+  .tag.info { background: #edf0f8; color: #4a5d8a; }
+  .meal-empty { color: #cbc6bb; font-style: italic; }
+
+  .macro-bar-wrap { display: flex; gap: 6px; align-items: center; margin-top: 4px; font-size: 0.72rem; flex-wrap: wrap; }
+  .macro-bar { flex: 1; min-width: 60px; height: 5px; border-radius: 3px; background: #e8e4dd; overflow: hidden; display: flex; }
+  .macro-bar .p { background: var(--accent); height: 100%; }
+  .macro-bar .c { background: var(--warn); height: 100%; }
+  .macro-bar .f { background: #8b6b9e; height: 100%; }
+
+  .eval-block {
+    margin: 0 16px 12px; padding: 12px 14px; border-radius: 10px;
+    background: #f9f8f5; border-left: 3px solid var(--accent);
+    font-size: 0.82rem; line-height: 1.6;
+  }
+  .eval-block.improve { border-left-color: var(--warn); background: #fefaf5; }
+  .eval-block .eval-title { font-weight: 700; margin-bottom: 4px; font-size: 0.85rem; }
+  .eval-block ul { margin: 4px 0 0 16px; }
+  .eval-block li { margin-bottom: 2px; }
+
+  .lifestyle-row {
+    display: flex; gap: 12px; flex-wrap: wrap; padding: 6px 16px 10px;
+    font-size: 0.8rem; color: var(--muted);
+  }
+  .lifestyle-item { display: flex; align-items: center; gap: 4px; }
+
+  .bmi-scale {
+    display: flex; height: 22px; border-radius: 11px; overflow: hidden;
+    margin: 6px 0; font-size: 0.62rem; line-height: 22px; text-align: center;
+  }
+  .bmi-scale div { flex: 1; }
+  .bmi-scale .under { background: #89b4d8; color: #fff; }
+  .bmi-scale .normal { background: #5b8c5a; color: #fff; }
+  .bmi-scale .over { background: #c4843e; color: #fff; }
+  .bmi-scale .obese { background: #c0504d; color: #fff; }
+  .bmi-marker {
+    width: 3px; height: 28px; background: #2c2416; border-radius: 2px;
+    position: absolute; top: -3px; transition: left 0.5s;
+  }
+  .bmi-wrap { position: relative; margin: 4px 0 8px; }
+
+  .footer { text-align: center; color: var(--muted); font-size: 0.7rem; padding: 16px 0; }
+  @media (max-width: 480px) {
+    body { padding: 8px; }
+    .summary-card { padding: 10px 6px; }
+    .summary-card .val { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌿 刘泳希 · 健康日记</h1>
+  <div class="sub" id="todayDate"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-panel="daily">📅 每日日记 / Daily Diary</button>
+  <button class="tab" data-panel="metrics">🩺 身体指标 / Lab Metrics</button>
+  <button class="tab" data-panel="trends">📈 趋势图表 / Trends</button>
+</div>
+
+<!-- ═══════════ PANEL: 每日日记 ═══════════ -->
+<div class="panel active" id="panel-daily">
+  <div class="summary-row" id="dailySummary"></div>
+  <div id="dailyCards"></div>
+</div>
+
+<!-- ═══════════ PANEL: 身体指标 ═══════════ -->
+<div class="panel" id="panel-metrics">
+  <div class="card">
+    <h2>📊 基线实验室数据 / Baseline Lab Results（2026-06-06 北医三院 Peking U. Third Hosp.）</h2>
+
+    <h3>肝功能 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Liver Function</span></h3>
+    <table class="metric-table">
+      <tr><th>项目 Item</th><th>结果 Result</th><th>参考范围 Ref.</th><th>状态 Status</th></tr>
+      <tr><td>ALT<br><span class="en">Alanine Aminotransferase / 谷丙转氨酶</span></td><td>105 U/L</td><td>7–40</td><td class="status high">⬆ 高 / High</td></tr>
+      <tr><td>AST<br><span class="en">Aspartate Aminotransferase / 谷草转氨酶</span></td><td>50 U/L</td><td>13–35</td><td class="status high">⬆ 高 / High</td></tr>
+      <tr><td>T-Bil<br><span class="en">Total Bilirubin / 总胆红素</span></td><td>33.4 μmol/L</td><td>0–23.0</td><td class="status high">⬆ 高 / High</td></tr>
+      <tr><td>γ-GT<br><span class="en">Gamma-Glutamyl Transferase / 谷氨酰转肽酶</span></td><td>72 U/L</td><td>7–45</td><td class="status high">⬆ 高 / High</td></tr>
+    </table>
+
+    <h3 style="margin-top:14px;">血脂 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Blood Lipids</span></h3>
+    <table class="metric-table">
+      <tr><th>项目 Item</th><th>结果 Result</th><th>参考范围 Ref.</th><th>状态 Status</th></tr>
+      <tr><td>总胆固醇 T-CHO<br><span class="en">Total Cholesterol / 总胆固醇</span></td><td>6.32 mmol/L</td><td>&lt;5.18</td><td class="status high">⬆ 高 / High</td></tr>
+      <tr><td>甘油三酯 TG<br><span class="en">Triglycerides / 甘油三酯</span></td><td>2.27 mmol/L</td><td>&lt;1.7</td><td class="status high">⬆ 高 / High</td></tr>
+      <tr><td>HDL-C<br><span class="en">High-Density Lipoprotein / 高密度脂蛋白</span></td><td>0.90 mmol/L</td><td>≥1.04</td><td class="status low">⬇ 低 / Low</td></tr>
+      <tr><td>LDL-C<br><span class="en">Low-Density Lipoprotein / 低密度脂蛋白</span></td><td>4.16 mmol/L</td><td>0–3.4</td><td class="status high">⬆ 高 / High</td></tr>
+    </table>
+
+    <h3 style="margin-top:14px;">糖代谢 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Glucose Metabolism</span></h3>
+    <table class="metric-table">
+      <tr><th>项目 Item</th><th>结果 Result</th><th>参考 Ref.</th><th>状态 Status</th></tr>
+      <tr><td>空腹血糖<br><span class="en">Fasting Glucose / 空腹血糖</span></td><td>4.7 mmol/L</td><td>3.9–6.1</td><td class="status ok">✓ 正常 / Normal</td></tr>
+      <tr><td>空腹胰岛素<br><span class="en">Fasting Insulin / 空腹胰岛素</span></td><td>12.6 mU/L</td><td>—</td><td class="status high">⬆ 偏高 / Elevated</td></tr>
+      <tr><td>HbA1c<br><span class="en">Glycated Hemoglobin / 糖化血红蛋白</span></td><td>5.7%</td><td>&lt;5.7</td><td class="status high">⚠ 临界 / Borderline</td></tr>
+      <tr><td>HOMA-IR<br><span class="en">Insulin Resistance Index / 胰岛素抵抗指数</span></td><td>2.63</td><td>&lt;2.0</td><td class="status high">⬆ IR / 胰岛素抵抗</td></tr>
+      <tr><td>OGTT 2h 血糖<br><span class="en">OGTT 2h Glucose / 糖耐量2h血糖</span></td><td>7.7 mmol/L</td><td>&lt;7.8</td><td class="status high">⚠ IGT / 糖耐量受损</td></tr>
+      <tr><td>OGTT 2h 胰岛素<br><span class="en">OGTT 2h Insulin / 糖耐量2h胰岛素</span></td><td>199.1 mU/L</td><td>—</td><td class="status high">⬆ 显著升高 / Markedly Elevated</td></tr>
+    </table>
+
+    <h3 style="margin-top:14px;">激素 & 其他 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Hormones & Others</span></h3>
+    <table class="metric-table">
+      <tr><th>项目 Item</th><th>结果 Result</th><th>参考 Ref.</th><th>状态 Status</th></tr>
+      <tr><td>LH/FSH<br><span class="en">LH/FSH Ratio / 促黄体生成素/卵泡刺激素比值</span></td><td>1.74</td><td>&lt;2</td><td class="status high">⚠ PCOS特征 / PCOS Feature</td></tr>
+      <tr><td>睾酮 T<br><span class="en">Testosterone / 睾酮</span></td><td>1.91 nmol/L</td><td>—</td><td class="status high">⬆ 正常偏高 / High-Normal</td></tr>
+      <tr><td>25OH-VitD<br><span class="en">25-Hydroxyvitamin D / 25-羟维生素D</span></td><td>9.3 ng/mL</td><td>≥30</td><td class="status high">⬇ 严重缺乏 / Severe Deficiency</td></tr>
+      <tr><td>hs-CRP<br><span class="en">High-Sensitivity C-Reactive Protein / 超敏C反应蛋白</span></td><td>8.98 mg/L</td><td>&lt;3</td><td class="status high">⬆ 显著升高 / Markedly Elevated</td></tr>
+      <tr><td>UA<br><span class="en">Uric Acid / 尿酸</span></td><td>383 μmol/L</td><td>&lt;360</td><td class="status high">⬆ 偏高 / Elevated</td></tr>
+      <tr><td>血压<br><span class="en">Blood Pressure / 血压</span></td><td>110/70 mmHg</td><td>—</td><td class="status ok">✓ 正常 / Normal</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>🖥 影像学 / Imaging</h2>
+    <table class="metric-table">
+      <tr><th>检查 Exam</th><th>结果 Result</th><th>日期 Date</th></tr>
+      <tr><td>FibroScan CAP<br><span class="en">受控衰减参数 / 脂肪肝定量</span></td><td>287 dB/m（S3 重度脂肪肝 / Severe Steatosis）</td><td>6/7</td></tr>
+      <tr><td>FibroScan E<br><span class="en">肝脏硬度 / Liver Stiffness</span></td><td>5.5 kPa（F0–F1 轻度纤维化 / Mild Fibrosis）</td><td>6/7</td></tr>
+      <tr><td>妇科彩超<br><span class="en">Gynecologic Ultrasound / 盆腔超声</span></td><td>双侧卵巢PCO（&gt;12个卵泡 / &gt;12 follicles），子宫前位 / Anteverted Uterus</td><td>6/8</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>🎯 目标计划 / Goals</h2>
+    <table class="metric-table">
+      <tr><th>时间 Timeline</th><th>体重 Weight</th><th>核心指标 Key Metrics</th></tr>
+      <tr><td>3个月 3mo（9月 Sep）</td><td>68kg（减 −7%）</td><td>ALT&lt;50, HOMA-IR&lt;2.0</td></tr>
+      <tr><td>6个月 6mo（12月 Dec）</td><td>62–66kg（减 −10~15%）</td><td>CAP&lt;248（S1），恢复排卵 / Resume Ovulation</td></tr>
+      <tr><td>12个月 12mo（明年6月 Jun 2027）</td><td>BMI 22–23</td><td>代谢全面正常 / Full Metabolic Recovery，PCOS 临床缓解 / Clinical Remission</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════ PANEL: 趋势图表 ═══════════ -->
+<div class="panel" id="panel-trends">
+  <div class="card">
+    <h2>⚖️ 体重趋势 / Weight Trend</h2>
+    <div class="chart-wrap"><canvas id="weightChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>🧮 BMI 变化 / BMI Trend</h2>
+    <div style="font-size:0.85rem;margin-bottom:6px;">
+      当前 BMI / Current BMI：<strong id="currentBmi"></strong>（身高 / Height 166cm）
+    </div>
+    <div class="bmi-wrap" id="bmiScaleWrap"></div>
+    <div class="chart-wrap" style="height:140px;"><canvas id="bmiChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>🍽 每日热量摄入 / Daily Calorie Intake</h2>
+    <div class="chart-wrap" style="height:180px;"><canvas id="kcalChart"></canvas></div>
+  </div>
+</div>
+
+<div class="footer">PCOS · MASH · IR · 目标 62–66kg · 更新于 2026-06-15</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA — update this block daily
+// ═══════════════════════════════════════════════
+const PROFILE = {
+  name: '刘泳希',
+  heightCm: 166,
+  targetKg: [62, 66],
+  rmr: 1600,            // 静息代谢 / Resting Metabolic Rate
+  tdee: 2160,           // 总消耗 / Total Daily Energy Expenditure (1.35×RMR)
+  kcalTargetLow: 1500,  // 推荐摄入下限
+  kcalTargetHigh: 1600, // 推荐摄入上限
+  proteinTarget: 85,
+  sleepTarget: '23:00',
+  stepsTarget: 8000,
+};
+
+const WEIGHTS = [
+  { date: '6.7',  kg: 76.9, source: '🏥' },
+  { date: '6.8',  kg: 74.5, source: '🏠' },
+  { date: '6.10', kg: 72.2, source: '🏠' },
+  { date: '6.11', kg: 72.15, source: '🏠' },
+  { date: '6.12', kg: 72.05, source: '🏠' },
+  { date: '6.13', kg: 73.5, source: '🏥' },
+  { date: '6.15', kg: 71.85, source: '🏠' },
+];
+
+const DAYS = [
+  {
+    date: '2026-06-15',
+    weekday: '周日 Sun',
+    weightKg: 71.85,
+    meals: {
+      breakfast: {
+        items: '瘦酱牛肉4片 + 煮鸡蛋1个 + 海参1根 + 清炒油菜一拳 + 蒸胡萝卜6片 + 黄心猕猴桃1个 + 无糖豆浆',
+        kcal: 325, protein: 31, carb: 24, fat: 9,
+        rating: 'good', note: '高蛋白低脂，蔬菜种类丰富，全食物搭配优秀 / High protein, low fat, rich veggies',
+      },
+      lunch: {
+        items: '黑米饭1小碗 + 芹菜炒胡萝卜 + 黄瓜拌鸡腿丝 + 小青李子1个',
+        kcal: 370, protein: 25, carb: 46, fat: 7,
+        rating: 'good', note: '全谷物低GI + 优质蛋白 + 两种蔬菜，黄瓜清爽低卡 / Whole grain, lean protein, mixed veggies',
+      },
+      dinner: null,
+    },
+    exercise: null,
+    sleep: null,
+    water: null,
+    supplements: '维生素D2 1粒（5000 IU / 0.125mg）',
+    symptoms: null,
+    eval: null,
+    evalType: null,
+  },
+];
+
+// ═══════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════
+document.getElementById('todayDate').textContent =
+  '📆 今天 Today：' + new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+
+// Tabs
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('active');
+    if (btn.dataset.panel === 'trends') { drawWeightChart(); drawBmiChart(); drawKcalChart(); }
+  });
+});
+
+// Daily Summary
+const latestW = WEIGHTS[WEIGHTS.length-1];
+const bmi = (latestW.kg / Math.pow(PROFILE.heightCm/100, 2)).toFixed(1);
+const startW = WEIGHTS[0].kg;
+const lostKg = (startW - latestW.kg).toFixed(1);
+const toTarget = (latestW.kg - PROFILE.targetKg[1]).toFixed(1);
+
+const today = DAYS[0];
+const todayKcal = [today.meals.breakfast, today.meals.lunch, today.meals.dinner]
+  .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
+const todayProtein = [today.meals.breakfast, today.meals.lunch, today.meals.dinner]
+  .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
+
+const dailySummaryData = [
+  { val: latestW.kg+'kg', lbl: '今晨体重 / Weight', cls: '' },
+  { val: bmi, lbl: 'BMI', cls: bmi>=24?'warn':'good' },
+  { val: '−'+lostKg+'kg', lbl: '已减 / Lost', cls: 'good' },
+  { val: todayKcal||'?', lbl: '今日摄入 / Kcal', cls: todayKcal&&todayKcal>1800?'warn':(todayKcal?'good':'') },
+  { val: todayProtein||'?', lbl: '蛋白质 / Protein(g)', cls: todayProtein&&todayProtein>=80?'good':(todayProtein?'warn':'') },
+  { val: toTarget>0?toTarget+'kg':'✓', lbl: '距目标 / To Target', cls: toTarget>0?'warn':'good' },
+];
+document.getElementById('dailySummary').innerHTML = dailySummaryData.map(s =>
+  `<div class="summary-card"><div class="val ${s.cls}">${s.val}</div><div class="lbl">${s.lbl}</div></div>`
+).join('');
+
+// BMI Scale
+document.getElementById('currentBmi').textContent = bmi;
+const bmiPct = Math.min(95, Math.max(5, (bmi - 15) / (35 - 15) * 100));
+document.getElementById('bmiScaleWrap').innerHTML = `
+  <div class="bmi-scale">
+    <div class="under">偏瘦 / Underweight &lt;18.5</div>
+    <div class="normal">正常 / Normal 18.5–24</div>
+    <div class="over">超重 / Overweight 24–28</div>
+    <div class="obese">肥胖 / Obese ≥28</div>
+  </div>
+  <div style="position:relative;height:10px;">
+    <div class="bmi-marker" style="left:${bmiPct}%;"></div>
+  </div>
+  <div style="font-size:0.7rem;color:var(--muted);text-align:center;">BMI ${bmi} → 超重区间 / Overweight · 目标 Target BMI 22.5–24.0</div>
+`;
+
+// Render Daily Cards
+function macroBar(m) {
+  if (!m || !m.protein || !m.carb || !m.fat) return '';
+  const t = m.protein + m.carb + m.fat;
+  return `<div class="macro-bar-wrap">
+    <span style="color:#5b8c5a">蛋 Pro ${m.protein}g</span>
+    <span style="color:#c4843e">碳 Carb ${m.carb}g</span>
+    <span style="color:#8b6b9e">脂 Fat ${m.fat}g</span>
+    <div class="macro-bar"><div class="p" style="width:${m.protein/t*100}%"></div><div class="c" style="width:${m.carb/t*100}%"></div><div class="f" style="width:${m.fat/t*100}%"></div></div>
+  </div>`;
+}
+
+function tags(m) {
+  if (!m) return '';
+  let t = '';
+  if (m.rating === 'good') t += '<span class="tag good">✓ 好 Good</span>';
+  if (m.rating === 'warn') t += '<span class="tag warn">⚠ 注意 Warn</span>';
+  if (m.rating === 'danger') t += '<span class="tag danger">✗ 差 Poor</span>';
+  if (m.kcal) t += `<span class="tag info">${m.kcal} kcal</span>`;
+  return t;
+}
+
+function renderMealBlock(labelEn, labelZh, meal, emoji) {
+  if (!meal) return `<div class="meal-block"><div class="meal-label">${emoji} ${labelZh} / ${labelEn}</div><div class="meal-content meal-empty">— 待记录 / Pending —</div></div>`;
+  return `<div class="meal-block">
+    <div class="meal-label">${emoji} ${labelZh} / ${labelEn}</div>
+    <div class="meal-content">${meal.items}</div>
+    ${meal.note ? `<div class="meal-meta">💡 ${meal.note}</div>` : ''}
+    <div class="meal-meta">${tags(meal)}</div>
+    ${macroBar(meal)}
+  </div>`;
+}
+
+function renderEval(day) {
+  if (!day.eval) return '';
+  const cls = day.evalType === 'improve' ? 'improve' : '';
+  return `<div class="eval-block ${cls}">
+    <div class="eval-title">${day.evalType==='improve'?'🟡 建议 / Suggestions':'✅ 今日评价 / Daily Review'}</div>
+    ${day.eval}
+  </div>`;
+}
+
+function renderDayCard(day) {
+  const totalKcal = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
+    .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
+  const totalProtein = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
+    .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
+  return `<div class="day-card">
+    <div class="day-header">
+      <span class="day-title">📅 ${day.date} ${day.weekday}</span>
+      <span class="day-stats">
+        <span>⚖️ ${day.weightKg} kg</span>
+        ${totalKcal ? `<span>🔥 ${totalKcal} kcal</span>` : ''}
+        ${totalProtein ? `<span>💪 蛋白 Pro ${totalProtein}g</span>` : ''}
+      </span>
+    </div>
+    ${renderMealBlock('Breakfast','早餐',day.meals.breakfast,'🌅')}
+    ${renderMealBlock('Lunch','午餐',day.meals.lunch,'☀️')}
+    ${renderMealBlock('Dinner','晚餐',day.meals.dinner,'🌙')}
+    <div class="lifestyle-row">
+      ${day.sleep ? `<div class="lifestyle-item">😴 睡眠 Sleep：${day.sleep}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">😴 睡眠 Sleep：待记录 / Pending</div>'}
+      ${day.exercise ? `<div class="lifestyle-item">🏃 运动 Exercise：${day.exercise}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">🏃 运动 Exercise：待记录 / Pending</div>'}
+      ${day.water ? `<div class="lifestyle-item">💧 饮水 Water：${day.water}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">💧 饮水 Water：待记录 / Pending</div>'}
+      ${day.supplements ? `<div class="lifestyle-item">💊 补剂 Suppl.：${day.supplements}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">💊 补剂 Suppl.：待记录 / Pending</div>'}
+      ${day.symptoms ? `<div class="lifestyle-item">📝 症状 Symptoms：${day.symptoms}</div>` : ''}
+    </div>
+    ${renderEval(day)}
+  </div>`;
+}
+
+document.getElementById('dailyCards').innerHTML = DAYS.map(renderDayCard).join('');
+
+// Charts
+function drawWeightChart() {
+  const ctx = document.getElementById('weightChart').getContext('2d');
+  if (ctx._chart) ctx._chart.destroy();
+  const gradient = ctx.createLinearGradient(0,0,0,200);
+  gradient.addColorStop(0,'rgba(91,140,90,0.18)'); gradient.addColorStop(1,'rgba(91,140,90,0)');
+  ctx._chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEIGHTS.map(w=>w.date),
+      datasets: [{
+        label:'体重 Weight (kg)', data:WEIGHTS.map(w=>w.kg),
+        borderColor:'#5b8c5a', backgroundColor:gradient, fill:true,
+        tension:0.4, pointRadius:5, pointBackgroundColor:'#fff', pointBorderColor:'#5b8c5a', pointBorderWidth:2, borderWidth:2.5,
+      }],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{display:false} },
+      scales:{
+        y:{ grace:'8%', ticks:{callback:v=>v+' kg',font:{size:11}}, grid:{color:'#e8e4dd'} },
+        x:{ grid:{display:false}, ticks:{font:{size:11}} },
+      },
+    },
+  });
+}
+
+function drawBmiChart() {
+  const ctx = document.getElementById('bmiChart').getContext('2d');
+  if (ctx._chart) ctx._chart.destroy();
+  const bmis = WEIGHTS.map(w => parseFloat((w.kg / Math.pow(PROFILE.heightCm/100,2)).toFixed(1)));
+  ctx._chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEIGHTS.map(w=>w.date),
+      datasets: [{
+        label:'BMI', data:bmis,
+        borderColor:'#8b6b9e', backgroundColor:'rgba(139,107,158,0.08)', fill:true,
+        tension:0.4, pointRadius:4, borderWidth:2.5,
+      }],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{ grace:'10%', ticks:{font:{size:11}}, grid:{color:'#e8e4dd'} },
+        x:{ grid:{display:false}, ticks:{font:{size:11}} },
+      },
+    },
+  });
+}
+
+function drawKcalChart() {
+  const ctx = document.getElementById('kcalChart').getContext('2d');
+  if (ctx._chart) ctx._chart.destroy();
+  const dates = DAYS.map(d=>d.date.slice(5));
+  const kcals = DAYS.map(d=>{
+    return [d.meals.breakfast,d.meals.lunch,d.meals.dinner].filter(Boolean).reduce((s,m)=>s+(m.kcal||0),0);
+  });
+  ctx._chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dates,
+      datasets: [{
+        label:'摄入 Intake (kcal)', data:kcals,
+        backgroundColor: kcals.map(k => k>1800?'rgba(192,80,77,0.6)':k>0?'rgba(91,140,90,0.6)':'rgba(200,200,200,0.3)'),
+        borderColor: kcals.map(k => k>1800?'#c0504d':'#5b8c5a'),
+        borderWidth: 1.5, borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{
+        y:{ grace:'20%', ticks:{callback:v=>v+' kcal',font:{size:11}}, grid:{color:'#e8e4dd'} },
+        x:{ grid:{display:false}, ticks:{font:{size:11}} },
+      },
+    },
+    plugins: [{
+      id: 'kcalTarget',
+      afterDraw(chart) {
+        const ctx = chart.ctx;
+        const xLeft = chart.scales.x.left;
+        const xRight = chart.scales.x.right;
+
+        // RMR line (1600)
+        const yRMR = chart.scales.y.getPixelForValue(PROFILE.rmr);
+        ctx.save();
+        ctx.beginPath(); ctx.setLineDash([3,6]);
+        ctx.strokeStyle = 'rgba(139,107,158,0.5)'; ctx.lineWidth = 1;
+        ctx.moveTo(xLeft, yRMR); ctx.lineTo(xRight, yRMR); ctx.stroke();
+        ctx.fillStyle = '#8b6b9e';
+        ctx.font = '9.5px sans-serif';
+        ctx.fillText('RMR/静息代谢 '+PROFILE.rmr, xRight-48, yRMR-4);
+        ctx.restore();
+
+        // TDEE line (2160)
+        const yTDEE = chart.scales.y.getPixelForValue(PROFILE.tdee);
+        ctx.save();
+        ctx.beginPath(); ctx.setLineDash([4,4]);
+        ctx.strokeStyle = 'rgba(192,80,77,0.4)'; ctx.lineWidth = 1;
+        ctx.moveTo(xLeft, yTDEE); ctx.lineTo(xRight, yTDEE); ctx.stroke();
+        ctx.fillStyle = '#c0504d';
+        ctx.font = '9.5px sans-serif';
+        ctx.fillText('TDEE/总消耗 '+PROFILE.tdee, xRight-60, yTDEE-4);
+        ctx.restore();
+
+        // Target zone (1500-1600) — shaded band
+        const yHi = chart.scales.y.getPixelForValue(PROFILE.kcalTargetHigh);
+        const yLo = chart.scales.y.getPixelForValue(PROFILE.kcalTargetLow);
+        ctx.save();
+        ctx.fillStyle = 'rgba(91,140,90,0.08)';
+        ctx.fillRect(xLeft, yHi, xRight - xLeft, yLo - yHi);
+        ctx.strokeStyle = 'rgba(91,140,90,0.5)';
+        ctx.lineWidth = 1.2; ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(xLeft, yHi); ctx.lineTo(xRight, yHi); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(xLeft, yLo); ctx.lineTo(xRight, yLo); ctx.stroke();
+        ctx.fillStyle = '#5b8c5a';
+        ctx.font = 'bold 9.5px sans-serif';
+        ctx.fillText('推荐摄入/Goal 1500–1600', xRight-120, (yHi+yLo)/2+3);
+        ctx.restore();
+      }
+    }],
+  });
+}
+
+// Draw charts on trends tab
+window._chartsDrawn = false;
+const observer = new MutationObserver(() => {
+  if (!window._chartsDrawn && document.getElementById('panel-trends').classList.contains('active')) {
+    setTimeout(() => { drawWeightChart(); drawBmiChart(); drawKcalChart(); window._chartsDrawn = true; }, 100);
+  }
+});
+document.querySelectorAll('.panel').forEach(p => observer.observe(p, { attributes: true, attributeFilter: ['class'] }));
+document.querySelector('[data-panel="trends"]').addEventListener('click', function h() {
+  setTimeout(() => { drawWeightChart(); drawBmiChart(); drawKcalChart(); window._chartsDrawn = true; }, 150);
+  this.removeEventListener('click', h);
+});
+</script>
+</body>
+</html>
