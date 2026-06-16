@@ -141,6 +141,39 @@
     background: #f9f8f5; border-left: 3px solid var(--accent);
     font-size: 0.82rem; line-height: 1.6;
   }
+
+  /* ── Energy Balance ── */
+  .energy-row {
+    margin: 0 16px 10px; padding: 12px 14px;
+    background: #fafaf8; border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .energy-row .e-title {
+    font-size: 0.75rem; font-weight: 700; color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .energy-line {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+    font-size: 0.78rem;
+  }
+  .energy-line .e-label { width: 90px; flex-shrink: 0; color: var(--muted); font-size: 0.73rem; }
+  .energy-line .e-val { width: 62px; flex-shrink: 0; text-align: right; font-weight: 600; font-size: 0.82rem; }
+  .energy-line .e-bar-wrap { flex: 1; height: 8px; background: #eeece6; border-radius: 4px; overflow: hidden; }
+  .energy-line .e-bar { height: 100%; border-radius: 4px; transition: width 0.5s; }
+  .e-bar.rmr { background: #c4b5d4; }
+  .e-bar.exercise { background: #e8c494; }
+  .e-bar.intake { background: #8cb88a; }
+  .energy-divider { border: none; border-top: 1px dashed #e0dcd4; margin: 6px 0; }
+  .energy-deficit { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 700; padding-top: 2px; }
+  .energy-deficit .e-badge {
+    padding: 2px 10px; border-radius: 12px; font-size: 0.85rem;
+    color: #fff;
+  }
+  .e-badge.good { background: #5b8c5a; }
+  .e-badge.warn { background: #c4843e; }
+  .e-badge.danger { background: #c0504d; }
+  .e-badge.idle { background: #aaa; }
+  .e-sm { font-size: 0.68rem; color: var(--muted); font-weight: 400; }
   .eval-block.improve { border-left-color: var(--warn); background: #fefaf5; }
   .eval-block .eval-title { font-weight: 700; margin-bottom: 4px; font-size: 0.85rem; }
   .eval-block ul { margin: 4px 0 0 16px; }
@@ -397,6 +430,7 @@ const DAYS = [
       },
     },
     exercise: '午饭后快走3km（37min, 204kcal）+ 晚上椭圆仪40min（336kcal, 1.87km）+ 功能性训练33kcal',
+    exerciseKcal: 573,
     sleep: '23:42–08:03（约8h21min）',
     water: '1500ml',
     supplements: '维生素D2 1粒（5000 IU / 0.125mg）',
@@ -418,6 +452,7 @@ const DAYS = [
       dinner: null,
     },
     exercise: null,
+    exerciseKcal: 0,
     sleep: null,
     water: null,
     supplements: null,
@@ -528,6 +563,56 @@ function renderEval(day) {
 }
 
 let dayIdCounter = 0;
+function renderEnergyBalance(day, totalKcal) {
+  const rmr = PROFILE.rmr; // 1600
+  const exKcal = day.exerciseKcal || 0;
+  const totalBurn = rmr + exKcal;
+  const deficit = totalBurn - (totalKcal || 0);
+  const maxBar = Math.max(totalBurn, totalKcal||0, 2000);
+
+  // RMR bar: always 1600
+  const rmrPct = (rmr / maxBar * 100).toFixed(1);
+  const exPct = (exKcal / maxBar * 100).toFixed(1);
+  const intakePct = ((totalKcal||0) / maxBar * 100).toFixed(1);
+
+  let badgeClass, badgeText;
+  if (!totalKcal) {
+    badgeClass = 'idle'; badgeText = '等待数据';
+  } else if (deficit > 1000) {
+    badgeClass = 'danger'; badgeText = '缺口 ' + deficit + ' kcal ⚠️ 过大';
+  } else if (deficit > 500) {
+    badgeClass = 'warn'; badgeText = '缺口 ' + deficit + ' kcal';
+  } else if (deficit >= 0) {
+    badgeClass = 'good'; badgeText = '缺口 ' + deficit + ' kcal ✓';
+  } else {
+    badgeClass = 'danger'; badgeText = '超额 +' + Math.abs(deficit) + ' kcal';
+  }
+
+  return `<div class="energy-row">
+    <div class="e-title">⚡ 能量账单 / Energy Balance</div>
+    <div class="energy-line">
+      <span class="e-label">🔥 基础代谢 RMR</span>
+      <div class="e-bar-wrap"><div class="e-bar rmr" style="width:${rmrPct}%"></div></div>
+      <span class="e-val">${rmr}</span>
+    </div>
+    <div class="energy-line">
+      <span class="e-label">🏃 运动消耗</span>
+      <div class="e-bar-wrap"><div class="e-bar exercise" style="width:${exPct}%"></div></div>
+      <span class="e-val">${exKcal}</span>
+    </div>
+    <div class="energy-line">
+      <span class="e-label">🍽 今日摄入</span>
+      <div class="e-bar-wrap"><div class="e-bar intake" style="width:${intakePct}%"></div></div>
+      <span class="e-val">${totalKcal||'?'}</span>
+    </div>
+    <hr class="energy-divider">
+    <div class="energy-deficit">
+      <span style="flex:1">总消耗 ${totalBurn} − 摄入 ${totalKcal||'?'}</span>
+      <span class="e-badge ${badgeClass}">${badgeText}</span>
+    </div>
+  </div>`;
+}
+
 function renderDayCard(day, isLatest) {
   const id = 'day-' + (dayIdCounter++);
   const totalKcal = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
@@ -549,6 +634,7 @@ function renderDayCard(day, isLatest) {
       ${renderMealBlock('Breakfast','早餐',day.meals.breakfast,'🌅')}
       ${renderMealBlock('Lunch','午餐',day.meals.lunch,'☀️')}
       ${renderMealBlock('Dinner','晚餐',day.meals.dinner,'🌙')}
+      ${renderEnergyBalance(day, totalKcal)}
       <div class="lifestyle-row">
         ${day.sleep ? `<div class="lifestyle-item">😴 睡眠 Sleep：${day.sleep}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">😴 睡眠 Sleep：待记录 / Pending</div>'}
         ${day.exercise ? `<div class="lifestyle-item">🏃 运动 Exercise：${day.exercise}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">🏃 运动 Exercise：待记录 / Pending</div>'}
