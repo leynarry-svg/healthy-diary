@@ -312,13 +312,34 @@ const DAYS = [
         rating: 'warn', note: '食物选择好（蔬菜+蛋），但蛋白质和总量偏低，晚餐建议加一份蛋白质',
       },
     },
-    exercise: null,
-    sleep: null,
+    exercise: '午饭后快走3km（37min, 204kcal）+ 晚上椭圆仪40min（336kcal, 1.87km）+ 功能性训练33kcal',
+    sleep: '23:42–08:03（约8h21min）',
     water: null,
     supplements: '维生素D2 1粒（5000 IU / 0.125mg）',
     symptoms: null,
-    eval: '<ul><li>🔥 全天热量 ~870 kcal，偏低（目标 1500–1600），今天缺口较大</li><li>💪 蛋白质 65g，未达标（目标 85g），晚餐再补一份蛋白即可达标</li><li>✅ 三餐搭配好——全谷物+蔬菜+优质蛋白贯穿全天</li><li>⚠️ 晚餐太轻，明天建议加量；运动、睡眠未记录</li></ul>',
+    eval: '<ul><li>🏃 运动优秀：快走+椭圆仪+功能性训练，总消耗~573kcal</li><li>😴 睡眠 8h21min，时长充足，入睡稍晚</li><li>🔥 全天摄入~870kcal，运动后净摄入仅~300kcal——严重偏低！可能导致代谢下降</li><li>💪 蛋白质65g未达标，食物质量好但总量不足</li><li>📌 明天务必加量，尤其晚餐补蛋白质</li></ul>',
     evalType: 'improve',
+  },
+  {
+    date: '2026-06-16',
+    weekday: '周一 Mon',
+    weightKg: null,
+    meals: {
+      breakfast: {
+        items: '半片全麦面包 + 水煮蛋1个（全蛋清+半蛋黄） + 焯生菜5片 + 紫甘蓝丝拌苹果丝 + 贝贝南瓜一小块 + 1/3水果玉米 + 小海参1个 + 瘦酱牛肉2片 + 无糖酸奶100g',
+        kcal: 345, protein: 25, carb: 41, fat: 6.5,
+        rating: 'good', note: '10种食材，碳水+蛋白+蔬菜+乳制品全覆盖，搭配优秀',
+      },
+      lunch: null,
+      dinner: null,
+    },
+    exercise: null,
+    sleep: null,
+    water: null,
+    supplements: null,
+    symptoms: null,
+    eval: null,
+    evalType: null,
   },
 ];
 
@@ -346,7 +367,7 @@ const startW = WEIGHTS[0].kg;
 const lostKg = (startW - latestW.kg).toFixed(1);
 const toTarget = (latestW.kg - PROFILE.targetKg[1]).toFixed(1);
 
-const today = DAYS[0];
+const today = DAYS[DAYS.length-1]; // 最新一天
 const todayKcal = [today.meals.breakfast, today.meals.lunch, today.meals.dinner]
   .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
 const todayProtein = [today.meals.breakfast, today.meals.lunch, today.meals.dinner]
