@@ -708,16 +708,35 @@ let isUnlocked = sessionStorage.getItem('health_unlocked') === 'true';
 
 function applyLockState() {
   const btn = document.getElementById('lockBtn');
+  const tabsMetrics = document.querySelector('[data-panel="metrics"]');
+  const tabsTrends = document.querySelector('[data-panel="trends"]');
+  const lockOverlay = document.getElementById('lockOverlay');
+
   if (isUnlocked) {
     btn.className = 'lock-btn unlocked';
     btn.innerHTML = '🔓 已解锁';
     document.querySelectorAll('.sensitive').forEach(el => el.classList.add('unlocked'));
     document.querySelectorAll('.shown-when-locked').forEach(el => el.classList.add('hidden'));
+    // Show locked tabs normally
+    if (tabsMetrics) { tabsMetrics.style.opacity = '1'; tabsMetrics.style.pointerEvents = 'auto'; }
+    if (tabsTrends) { tabsTrends.style.opacity = '1'; tabsTrends.style.pointerEvents = 'auto'; }
+    if (lockOverlay) lockOverlay.style.display = 'none';
   } else {
     btn.className = 'lock-btn locked';
     btn.innerHTML = '🔒 隐私保护中';
     document.querySelectorAll('.sensitive').forEach(el => el.classList.remove('unlocked'));
     document.querySelectorAll('.shown-when-locked').forEach(el => el.classList.remove('hidden'));
+    // Lock metrics & trends tabs
+    if (tabsMetrics) { tabsMetrics.style.opacity = '0.45'; tabsMetrics.style.pointerEvents = 'none'; }
+    if (tabsTrends) { tabsTrends.style.opacity = '0.45'; tabsTrends.style.pointerEvents = 'none'; }
+    // If currently on a locked tab, switch to daily
+    const activePanel = document.querySelector('.panel.active');
+    if (activePanel && (activePanel.id === 'panel-metrics' || activePanel.id === 'panel-trends')) {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelector('.tab[data-panel="daily"]').classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-daily').classList.add('active');
+    }
     // Clear chart canvases
     ['weightChart','bmiChart','kcalChart'].forEach(id => {
       const c = document.getElementById(id);
@@ -725,7 +744,25 @@ function applyLockState() {
       if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
     });
     window._chartsDrawn = false;
+    // Show lock overlay on metrics & trends panels
+    if (lockOverlay) lockOverlay.style.display = 'flex';
   }
+}
+
+// Inject lock overlay into metrics & trends panels
+function injectLockOverlay() {
+  ['panel-metrics','panel-trends'].forEach(id => {
+    const panel = document.getElementById(id);
+    if (!panel) return;
+    if (panel.querySelector('.lock-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'lock-overlay';
+    overlay.id = id === 'panel-metrics' ? 'lockOverlay' : 'lockOverlay2';
+    overlay.innerHTML = '<div class="lock-overlay-msg">🔒<br>请先解锁查看<br><small>Tap 🔒 to unlock</small></div>';
+    overlay.style.cssText = 'display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(246,244,240,0.9);z-index:10;justify-content:center;align-items:center;text-align:center;font-size:1.1rem;color:var(--muted);border-radius:var(--radius);';
+    panel.style.position = 'relative';
+    panel.appendChild(overlay);
+  });
 }
 
 window.toggleLock = function() {
@@ -767,8 +804,11 @@ function markSensitive() {
   if (bmiEl && !bmiEl.classList.contains('sensitive')) bmiEl.classList.add('sensitive');
 }
 
-setTimeout(markSensitive, 200);
-applyLockState();
+setTimeout(() => {
+  markSensitive();
+  injectLockOverlay();
+  applyLockState();
+}, 200);
 </script>
 </body>
 </html>
