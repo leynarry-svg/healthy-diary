@@ -90,9 +90,15 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 16px; background: #faf9f7;
     border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 4px;
+    cursor: pointer; user-select: none;
   }
-  .day-header .day-title { font-weight: 700; font-size: 0.95rem; }
+  .day-header:hover { background: #f3f1eb; }
+  .day-header .day-title { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
   .day-header .day-stats { font-size: 0.78rem; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+  .day-arrow { font-size: 0.7rem; transition: transform 0.2s; color: var(--muted); }
+  .day-arrow.open { transform: rotate(90deg); }
+  .day-body { transition: max-height 0.3s ease; }
+  .day-body.collapsed { display: none; }
   .meal-block { padding: 10px 16px; border-bottom: 1px solid #f5f2ec; }
   .meal-block:last-child { border-bottom: none; }
   .meal-label {
@@ -444,35 +450,41 @@ function renderEval(day) {
   </div>`;
 }
 
-function renderDayCard(day) {
+let dayIdCounter = 0;
+function renderDayCard(day, isLatest) {
+  const id = 'day-' + (dayIdCounter++);
   const totalKcal = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
     .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
   const totalProtein = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
     .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
+  const arrowClass = isLatest ? 'open' : '';
+  const bodyClass = isLatest ? '' : 'collapsed';
   return `<div class="day-card">
-    <div class="day-header">
-      <span class="day-title">📅 ${day.date} ${day.weekday}</span>
+    <div class="day-header" onclick="document.getElementById('${id}').classList.toggle('collapsed');this.querySelector('.day-arrow').classList.toggle('open');">
+      <span class="day-title"><span class="day-arrow ${arrowClass}">▶</span> 📅 ${day.date} ${day.weekday}</span>
       <span class="day-stats">
-        <span>⚖️ ${day.weightKg} kg</span>
+        ${day.weightKg ? `<span>⚖️ ${day.weightKg} kg</span>` : ''}
         ${totalKcal ? `<span>🔥 ${totalKcal} kcal</span>` : ''}
         ${totalProtein ? `<span>💪 蛋白 Pro ${totalProtein}g</span>` : ''}
       </span>
     </div>
-    ${renderMealBlock('Breakfast','早餐',day.meals.breakfast,'🌅')}
-    ${renderMealBlock('Lunch','午餐',day.meals.lunch,'☀️')}
-    ${renderMealBlock('Dinner','晚餐',day.meals.dinner,'🌙')}
-    <div class="lifestyle-row">
-      ${day.sleep ? `<div class="lifestyle-item">😴 睡眠 Sleep：${day.sleep}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">😴 睡眠 Sleep：待记录 / Pending</div>'}
-      ${day.exercise ? `<div class="lifestyle-item">🏃 运动 Exercise：${day.exercise}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">🏃 运动 Exercise：待记录 / Pending</div>'}
-      ${day.water ? `<div class="lifestyle-item">💧 饮水 Water：${day.water}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">💧 饮水 Water：待记录 / Pending</div>'}
-      ${day.supplements ? `<div class="lifestyle-item">💊 补剂 Suppl.：${day.supplements}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">💊 补剂 Suppl.：待记录 / Pending</div>'}
-      ${day.symptoms ? `<div class="lifestyle-item">📝 症状 Symptoms：${day.symptoms}</div>` : ''}
+    <div class="day-body ${bodyClass}" id="${id}">
+      ${renderMealBlock('Breakfast','早餐',day.meals.breakfast,'🌅')}
+      ${renderMealBlock('Lunch','午餐',day.meals.lunch,'☀️')}
+      ${renderMealBlock('Dinner','晚餐',day.meals.dinner,'🌙')}
+      <div class="lifestyle-row">
+        ${day.sleep ? `<div class="lifestyle-item">😴 睡眠 Sleep：${day.sleep}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">😴 睡眠 Sleep：待记录 / Pending</div>'}
+        ${day.exercise ? `<div class="lifestyle-item">🏃 运动 Exercise：${day.exercise}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">🏃 运动 Exercise：待记录 / Pending</div>'}
+        ${day.water ? `<div class="lifestyle-item">💧 饮水 Water：${day.water}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">💧 饮水 Water：待记录 / Pending</div>'}
+        ${day.supplements ? `<div class="lifestyle-item">💊 补剂 Suppl.：${day.supplements}</div>` : '<div class="lifestyle-item" style="color:#cbc6bb">💊 补剂 Suppl.：待记录 / Pending</div>'}
+        ${day.symptoms ? `<div class="lifestyle-item">📝 症状 Symptoms：${day.symptoms}</div>` : ''}
+      </div>
+      ${renderEval(day)}
     </div>
-    ${renderEval(day)}
   </div>`;
 }
 
-document.getElementById('dailyCards').innerHTML = DAYS.map(renderDayCard).join('');
+document.getElementById('dailyCards').innerHTML = DAYS.map((d,i) => renderDayCard(d, i === DAYS.length-1)).join('');
 
 // Charts
 function drawWeightChart() {
