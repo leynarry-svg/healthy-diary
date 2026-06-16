@@ -377,7 +377,7 @@
   </div>
 </div>
 
-<div class="footer">PCOS · MASH · IR · 目标 62–66kg · 更新于 2026-06-16</div>
+<div class="footer" id="footerText">PCOS · MASH · IR · 目标 62–66kg</div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -475,6 +475,9 @@ const DAYS = [
 // ═══════════════════════════════════════════════
 document.getElementById('todayDate').textContent =
   '📆 今天 Today：' + new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+
+document.getElementById('footerText').textContent += ' · 更新于 ' +
+  new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit' });
 
 // Tabs
 document.querySelectorAll('.tab').forEach(btn => {
