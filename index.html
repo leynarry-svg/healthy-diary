@@ -99,6 +99,20 @@
   .day-arrow.open { transform: rotate(90deg); }
   .day-body { transition: max-height 0.3s ease; }
   .day-body.collapsed { display: none; }
+
+  /* ── Collapsible Metric Sections ── */
+  .metric-section { margin-bottom: 2px; }
+  .metric-section-header {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 0; cursor: pointer; user-select: none;
+    border-bottom: 1px solid transparent;
+  }
+  .metric-section-header:hover { opacity: 0.8; }
+  .metric-section-header h3 { margin-bottom: 0 !important; font-size: 0.88rem; font-weight: 600; color: var(--muted); }
+  .metric-arrow { font-size: 0.65rem; transition: transform 0.2s; color: var(--muted); }
+  .metric-arrow.open { transform: rotate(90deg); }
+  .metric-section-body.collapsed { display: none; }
+
   .meal-block { padding: 10px 16px; border-bottom: 1px solid #f5f2ec; }
   .meal-block:last-child { border-bottom: none; }
   .meal-label {
@@ -153,6 +167,21 @@
   }
   .bmi-wrap { position: relative; margin: 4px 0 8px; }
 
+  /* ── Privacy Lock ── */
+  .sensitive { filter: blur(5px); cursor: pointer; transition: filter 0.3s; user-select: none; }
+  .sensitive.unlocked { filter: none; }
+  .lock-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 999;
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 6px 12px; font-size: 0.85rem; cursor: pointer; box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 4px; color: var(--text);
+  }
+  .lock-btn.locked { background: #fdf0e2; border-color: #e0c89b; }
+  .lock-btn.unlocked { background: #e6f0e5; border-color: #8cb88a; }
+  .hidden-when-locked { display: none; }
+  .shown-when-locked { display: block; }
+  .shown-when-locked.hidden { display: none; }
+
   .footer { text-align: center; color: var(--muted); font-size: 0.7rem; padding: 16px 0; }
   @media (max-width: 480px) {
     body { padding: 8px; }
@@ -167,6 +196,8 @@
   <h1>🌿 刘泳希 · 健康日记</h1>
   <div class="sub" id="todayDate"></div>
 </div>
+
+<button class="lock-btn locked" id="lockBtn" onclick="toggleLock()" title="点击解锁查看隐私数据 / Tap to unlock">🔒 隐私保护中</button>
 
 <div class="tabs">
   <button class="tab active" data-panel="daily">📅 每日日记 / Daily Diary</button>
@@ -185,27 +216,46 @@
   <div class="card">
     <h2>📊 基线实验室数据 / Baseline Lab Results（2026-06-06 北医三院 Peking U. Third Hosp.）</h2>
 
-    <h3>肝功能 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Liver Function</span></h3>
-    <table class="metric-table">
-      <tr><th>项目 Item</th><th>结果 Result</th><th>参考范围 Ref.</th><th>状态 Status</th></tr>
+    <div class="metric-section">
+      <div class="metric-section-header" onclick="this.nextElementSibling.classList.toggle('collapsed');this.querySelector('.metric-arrow').classList.toggle('open');">
+        <span class="metric-arrow open">▶</span>
+        <h3>肝功能 / Liver Function</h3>
+      </div>
+      <div class="metric-section-body">
+        <table class="metric-table">
+          <tr><th>项目 Item</th><th>结果 Result</th><th>参考范围 Ref.</th><th>状态 Status</th></tr>
       <tr><td>ALT<br><span class="en">Alanine Aminotransferase / 谷丙转氨酶</span></td><td>105 U/L</td><td>7–40</td><td class="status high">⬆ 高 / High</td></tr>
       <tr><td>AST<br><span class="en">Aspartate Aminotransferase / 谷草转氨酶</span></td><td>50 U/L</td><td>13–35</td><td class="status high">⬆ 高 / High</td></tr>
       <tr><td>T-Bil<br><span class="en">Total Bilirubin / 总胆红素</span></td><td>33.4 μmol/L</td><td>0–23.0</td><td class="status high">⬆ 高 / High</td></tr>
       <tr><td>γ-GT<br><span class="en">Gamma-Glutamyl Transferase / 谷氨酰转肽酶</span></td><td>72 U/L</td><td>7–45</td><td class="status high">⬆ 高 / High</td></tr>
     </table>
+      </div>
+    </div>
 
-    <h3 style="margin-top:14px;">血脂 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Blood Lipids</span></h3>
-    <table class="metric-table">
-      <tr><th>项目 Item</th><th>结果 Result</th><th>参考范围 Ref.</th><th>状态 Status</th></tr>
+    <div class="metric-section">
+      <div class="metric-section-header" onclick="this.nextElementSibling.classList.toggle('collapsed');this.querySelector('.metric-arrow').classList.toggle('open');">
+        <span class="metric-arrow">▶</span>
+        <h3>血脂 / Blood Lipids</h3>
+      </div>
+      <div class="metric-section-body collapsed">
+        <table class="metric-table">
+          <tr><th>项目 Item</th><th>结果 Result</th><th>参考范围 Ref.</th><th>状态 Status</th></tr>
       <tr><td>总胆固醇 T-CHO<br><span class="en">Total Cholesterol / 总胆固醇</span></td><td>6.32 mmol/L</td><td>&lt;5.18</td><td class="status high">⬆ 高 / High</td></tr>
       <tr><td>甘油三酯 TG<br><span class="en">Triglycerides / 甘油三酯</span></td><td>2.27 mmol/L</td><td>&lt;1.7</td><td class="status high">⬆ 高 / High</td></tr>
       <tr><td>HDL-C<br><span class="en">High-Density Lipoprotein / 高密度脂蛋白</span></td><td>0.90 mmol/L</td><td>≥1.04</td><td class="status low">⬇ 低 / Low</td></tr>
       <tr><td>LDL-C<br><span class="en">Low-Density Lipoprotein / 低密度脂蛋白</span></td><td>4.16 mmol/L</td><td>0–3.4</td><td class="status high">⬆ 高 / High</td></tr>
     </table>
+      </div>
+    </div>
 
-    <h3 style="margin-top:14px;">糖代谢 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Glucose Metabolism</span></h3>
-    <table class="metric-table">
-      <tr><th>项目 Item</th><th>结果 Result</th><th>参考 Ref.</th><th>状态 Status</th></tr>
+    <div class="metric-section">
+      <div class="metric-section-header" onclick="this.nextElementSibling.classList.toggle('collapsed');this.querySelector('.metric-arrow').classList.toggle('open');">
+        <span class="metric-arrow">▶</span>
+        <h3>糖代谢 / Glucose Metabolism</h3>
+      </div>
+      <div class="metric-section-body collapsed">
+        <table class="metric-table">
+          <tr><th>项目 Item</th><th>结果 Result</th><th>参考 Ref.</th><th>状态 Status</th></tr>
       <tr><td>空腹血糖<br><span class="en">Fasting Glucose / 空腹血糖</span></td><td>4.7 mmol/L</td><td>3.9–6.1</td><td class="status ok">✓ 正常 / Normal</td></tr>
       <tr><td>空腹胰岛素<br><span class="en">Fasting Insulin / 空腹胰岛素</span></td><td>12.6 mU/L</td><td>—</td><td class="status high">⬆ 偏高 / Elevated</td></tr>
       <tr><td>HbA1c<br><span class="en">Glycated Hemoglobin / 糖化血红蛋白</span></td><td>5.7%</td><td>&lt;5.7</td><td class="status high">⚠ 临界 / Borderline</td></tr>
@@ -213,10 +263,17 @@
       <tr><td>OGTT 2h 血糖<br><span class="en">OGTT 2h Glucose / 糖耐量2h血糖</span></td><td>7.7 mmol/L</td><td>&lt;7.8</td><td class="status high">⚠ IGT / 糖耐量受损</td></tr>
       <tr><td>OGTT 2h 胰岛素<br><span class="en">OGTT 2h Insulin / 糖耐量2h胰岛素</span></td><td>199.1 mU/L</td><td>—</td><td class="status high">⬆ 显著升高 / Markedly Elevated</td></tr>
     </table>
+      </div>
+    </div>
 
-    <h3 style="margin-top:14px;">激素 & 其他 <span style="font-weight:400;font-size:0.75rem;color:var(--muted)">Hormones & Others</span></h3>
-    <table class="metric-table">
-      <tr><th>项目 Item</th><th>结果 Result</th><th>参考 Ref.</th><th>状态 Status</th></tr>
+    <div class="metric-section">
+      <div class="metric-section-header" onclick="this.nextElementSibling.classList.toggle('collapsed');this.querySelector('.metric-arrow').classList.toggle('open');">
+        <span class="metric-arrow">▶</span>
+        <h3>激素 & 其他 / Hormones & Others</h3>
+      </div>
+      <div class="metric-section-body collapsed">
+        <table class="metric-table">
+          <tr><th>项目 Item</th><th>结果 Result</th><th>参考 Ref.</th><th>状态 Status</th></tr>
       <tr><td>LH/FSH<br><span class="en">LH/FSH Ratio / 促黄体生成素/卵泡刺激素比值</span></td><td>1.74</td><td>&lt;2</td><td class="status high">⚠ PCOS特征 / PCOS Feature</td></tr>
       <tr><td>睾酮 T<br><span class="en">Testosterone / 睾酮</span></td><td>1.91 nmol/L</td><td>—</td><td class="status high">⬆ 正常偏高 / High-Normal</td></tr>
       <tr><td>25OH-VitD<br><span class="en">25-Hydroxyvitamin D / 25-羟维生素D</span></td><td>9.3 ng/mL</td><td>≥30</td><td class="status high">⬇ 严重缺乏 / Severe Deficiency</td></tr>
@@ -224,26 +281,46 @@
       <tr><td>UA<br><span class="en">Uric Acid / 尿酸</span></td><td>383 μmol/L</td><td>&lt;360</td><td class="status high">⬆ 偏高 / Elevated</td></tr>
       <tr><td>血压<br><span class="en">Blood Pressure / 血压</span></td><td>110/70 mmHg</td><td>—</td><td class="status ok">✓ 正常 / Normal</td></tr>
     </table>
+      </div>
+    </div>
   </div>
 
   <div class="card">
     <h2>🖥 影像学 / Imaging</h2>
-    <table class="metric-table">
-      <tr><th>检查 Exam</th><th>结果 Result</th><th>日期 Date</th></tr>
+
+    <div class="metric-section">
+      <div class="metric-section-header" onclick="this.nextElementSibling.classList.toggle('collapsed');this.querySelector('.metric-arrow').classList.toggle('open');">
+        <span class="metric-arrow">▶</span>
+        <h3>影像学检查 / Imaging Exams</h3>
+      </div>
+      <div class="metric-section-body collapsed">
+        <table class="metric-table">
+          <tr><th>检查 Exam</th><th>结果 Result</th><th>日期 Date</th></tr>
       <tr><td>FibroScan CAP<br><span class="en">受控衰减参数 / 脂肪肝定量</span></td><td>287 dB/m（S3 重度脂肪肝 / Severe Steatosis）</td><td>6/7</td></tr>
       <tr><td>FibroScan E<br><span class="en">肝脏硬度 / Liver Stiffness</span></td><td>5.5 kPa（F0–F1 轻度纤维化 / Mild Fibrosis）</td><td>6/7</td></tr>
       <tr><td>妇科彩超<br><span class="en">Gynecologic Ultrasound / 盆腔超声</span></td><td>双侧卵巢PCO（&gt;12个卵泡 / &gt;12 follicles），子宫前位 / Anteverted Uterus</td><td>6/8</td></tr>
     </table>
+      </div>
+    </div>
   </div>
 
   <div class="card">
     <h2>🎯 目标计划 / Goals</h2>
-    <table class="metric-table">
-      <tr><th>时间 Timeline</th><th>体重 Weight</th><th>核心指标 Key Metrics</th></tr>
+
+    <div class="metric-section">
+      <div class="metric-section-header" onclick="this.nextElementSibling.classList.toggle('collapsed');this.querySelector('.metric-arrow').classList.toggle('open');">
+        <span class="metric-arrow">▶</span>
+        <h3>减重目标 / Weight Goals</h3>
+      </div>
+      <div class="metric-section-body collapsed">
+        <table class="metric-table">
+          <tr><th>时间 Timeline</th><th>体重 Weight</th><th>核心指标 Key Metrics</th></tr>
       <tr><td>3个月 3mo（9月 Sep）</td><td>68kg（减 −7%）</td><td>ALT&lt;50, HOMA-IR&lt;2.0</td></tr>
       <tr><td>6个月 6mo（12月 Dec）</td><td>62–66kg（减 −10~15%）</td><td>CAP&lt;248（S1），恢复排卵 / Resume Ovulation</td></tr>
       <tr><td>12个月 12mo（明年6月 Jun 2027）</td><td>BMI 22–23</td><td>代谢全面正常 / Full Metabolic Recovery，PCOS 临床缓解 / Clinical Remission</td></tr>
     </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -624,6 +701,74 @@ document.querySelector('[data-panel="trends"]').addEventListener('click', functi
   setTimeout(() => { drawWeightChart(); drawBmiChart(); drawKcalChart(); window._chartsDrawn = true; }, 150);
   this.removeEventListener('click', h);
 });
+
+// ═══════════════ PRIVACY LOCK ═══════════════
+const LOCK_PASSWORD = 'xixi';
+let isUnlocked = sessionStorage.getItem('health_unlocked') === 'true';
+
+function applyLockState() {
+  const btn = document.getElementById('lockBtn');
+  if (isUnlocked) {
+    btn.className = 'lock-btn unlocked';
+    btn.innerHTML = '🔓 已解锁';
+    document.querySelectorAll('.sensitive').forEach(el => el.classList.add('unlocked'));
+    document.querySelectorAll('.shown-when-locked').forEach(el => el.classList.add('hidden'));
+  } else {
+    btn.className = 'lock-btn locked';
+    btn.innerHTML = '🔒 隐私保护中';
+    document.querySelectorAll('.sensitive').forEach(el => el.classList.remove('unlocked'));
+    document.querySelectorAll('.shown-when-locked').forEach(el => el.classList.remove('hidden'));
+    // Clear chart canvases
+    ['weightChart','bmiChart','kcalChart'].forEach(id => {
+      const c = document.getElementById(id);
+      if (c && c._chart) c._chart.destroy();
+      if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
+    });
+    window._chartsDrawn = false;
+  }
+}
+
+window.toggleLock = function() {
+  if (isUnlocked) {
+    isUnlocked = false;
+    sessionStorage.removeItem('health_unlocked');
+    applyLockState();
+  } else {
+    const pwd = prompt('请输入查看密码 / Enter password:');
+    if (pwd === LOCK_PASSWORD) {
+      isUnlocked = true;
+      sessionStorage.setItem('health_unlocked', 'true');
+      applyLockState();
+      // Redraw charts if trends tab is active
+      if (document.getElementById('panel-trends').classList.contains('active')) {
+        drawWeightChart(); drawBmiChart(); drawKcalChart(); window._chartsDrawn = true;
+      }
+    } else if (pwd !== null) {
+      alert('密码错误 / Wrong password');
+    }
+  }
+};
+
+// Wrap sensitive numbers on page load
+function markSensitive() {
+  // Summary card values
+  document.querySelectorAll('.summary-card .val').forEach(el => {
+    const text = el.textContent.trim();
+    if (/\d/.test(text) && !el.classList.contains('sensitive')) {
+      el.classList.add('sensitive');
+    }
+  });
+  // Day card weight stats
+  document.querySelectorAll('.day-stats span').forEach(el => {
+    if (!el.classList.contains('sensitive')) el.classList.add('sensitive');
+  });
+  // Current BMI display
+  const bmiEl = document.getElementById('currentBmi');
+  if (bmiEl && !bmiEl.classList.contains('sensitive')) bmiEl.classList.add('sensitive');
+}
+
+setTimeout(markSensitive, 200);
+applyLockState();
 </script>
 </body>
 </html>
