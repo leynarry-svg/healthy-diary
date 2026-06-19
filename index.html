@@ -407,6 +407,7 @@ const WEIGHTS = [
   { date: '6.16', kg: 71.3, source: '🏠' },
   { date: '6.17', kg: 71.8, source: '🏠' },
   { date: '6.18', kg: 71.7, source: '🏠' },
+  { date: '6.19', kg: 71.65, source: '🏠' },
 ];
 
 const DAYS = [
@@ -491,14 +492,14 @@ const DAYS = [
         rating: 'warn', note: '虾+蛋清双蛋白，果蔬丰富，但热量210kcal偏低蛋白16g偏少，建议补10-15g蛋白 / Light dinner, suggest adding more protein',
       },
     },
-    exercise: null,
-    exerciseKcal: null,
+    exercise: '跑步机爬坡1h / 4km / 306 kcal',
+    exerciseKcal: 306,
     sleep: '23:20–8:00（8h40min，深睡51min）',
     water: null,
     supplements: '休息日（昨日已服D2 5000 IU）',
     symptoms: null,
-    eval: '<ul><li>😴 睡眠8h40min！比前三天提前1小时入睡，本周最佳 / Best sleep this week</li><li>🐟 午餐三文鱼是今日亮点——Omega-3抗炎降脂，PCOS+脂肪肝+高血脂三重受益</li><li>🍽️ 三餐搭配均衡，食材~20种，低GI执行好，蔬菜种类丰富</li><li>💪 蛋白质70g（82%目标），晚餐偏轻是主因，明天午餐/晚餐可适当加量</li><li>🔥 全天~1010kcal低于1500目标（差~490kcal），能量缺口偏大</li><li>📉 体重143.4，-0.2斤，累计-10.4斤（5.2kg），稳步下降</li><li>⚠️ 运动+饮水未记录，明天记得补上</li></ul>',
-    evalType: 'improve',
+    eval: '<ul><li>😴 睡眠8h40min！比前三天提前1小时入睡，本周最佳 / Best sleep this week</li><li>🐟 午餐三文鱼——Omega-3抗炎降脂，PCOS+脂肪肝+高血脂三重受益</li><li>🏃 跑步机爬坡1h/4km/306kcal，低冲击有氧，对胰岛素抵抗+脂肪肝有益</li><li>🍽️ 三餐搭配均衡，食材~20种，低GI执行好</li><li>💪 蛋白质70g（82%目标），晚餐偏轻是主因</li><li>🔥 摄入~1010kcal + 运动306kcal，净摄入~704kcal温和</li><li>📉 体重143.4，-0.2斤，累计-10.4斤（5.2kg）</li></ul>',
+    evalType: 'good',
   },
   {
     date: '2026-06-17',
@@ -528,6 +529,31 @@ const DAYS = [
     supplements: '维生素D2 1粒（5000 IU，隔天一次）',
     symptoms: null,
     eval: '<ul><li>🥩 蛋白质121.6g（34%），远超85g目标（143%），保护肌肉代谢满分</li><li>🔥 全天1413kcal，接近1500目标（差87kcal），比昨日改善268kcal</li><li>🏃 运动三段式覆盖全天：晨骑+午走+晚走，总消耗357kcal</li><li>🍽️ 三餐搭配均衡，晚餐清爽优秀，全天蔬菜种类丰富</li><li>💧 饮水1500ml达标，💊 补剂D2按时服用</li><li>😴 睡眠7h5min，时长及格，入睡略晚</li><li>📊 净摄入~1056kcal，能量缺口~544kcal，适中健康区间</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-06-19',
+    weekday: '周五 Fri',
+    weightKg: 71.65,
+    meals: {
+      breakfast: {
+        items: '水煮蛋1个 + 2/3水果玉米 + 6颗蓝莓 + 海参1根 + 西红柿拌黄瓜80g + 4小段苦瓜 + 4片蒸红薯 + 6片蒸胡萝卜 + 半碗无糖豆浆',
+        kcal: 310, protein: 20, carb: 42, fat: 8,
+        rating: 'good', note: '9种食材蒸拌为主，苦瓜降糖降脂，海参低脂高蛋白 / 9 whole foods, bitter gourd good for IR+NAFLD',
+      },
+      lunch: {
+        items: '100g黄瓜丝拌去皮鸡腿丝 + 50g糙米饭 + 30g拌菜花 + 80g西红柿炒蛋',
+        kcal: 360, protein: 34, carb: 20, fat: 13,
+        rating: 'good', note: '去皮鸡腿丝优质蛋白~28g + 蛋 + 糙米饭低GI + 菜花十字花科抗炎 / Chicken + egg dual protein, low GI, cruciferous anti-inflammatory',
+      },
+    },
+    exercise: null,
+    exerciseKcal: null,
+    sleep: '00:10–8:45（8h35min）',
+    water: null,
+    supplements: '维生素D2 1粒（5000 IU，隔天一次，今日服用）',
+    symptoms: null,
+    eval: '<ul><li>😴 睡眠8h35min时长充足，但00:10入睡偏晚，明天争取23:30前</li><li>🍳 早+午670kcal / 蛋白54g——午餐蛋白密度高有力补足早间缺口</li><li>🥒 苦瓜首秀！对胰岛素抵抗+脂肪肝有辅助益处</li><li>📉 体重143.3，-0.1斤，连续稳步下降</li><li>🔄 晚餐待记录，下午/晚上需补~830kcal达1500目标</li></ul>',
     evalType: 'good',
   },
 ];
