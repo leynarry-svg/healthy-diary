@@ -215,6 +215,23 @@
   .shown-when-locked { display: block; }
   .shown-when-locked.hidden { display: none; }
 
+  /* ── Week Group ── */
+  .week-group { margin-bottom: 20px; }
+  .week-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 16px; background: #faf9f7;
+    border-radius: var(--radius); border: 1px solid var(--border);
+    cursor: pointer; user-select: none; margin-bottom: 6px;
+    box-shadow: var(--shadow); flex-wrap: wrap; gap: 4px;
+  }
+  .week-header:hover { background: #f0efe7; }
+  .week-header .week-title { font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+  .week-header .week-stats { font-size: 0.73rem; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+  .week-arrow { font-size: 0.7rem; transition: transform 0.2s; color: var(--muted); }
+  .week-arrow.open { transform: rotate(90deg); }
+  .week-body.collapsed { display: none; }
+  .week-day-cards { padding-left: 10px; border-left: 3px solid #e8e2d9; }
+
   .footer { text-align: center; color: var(--muted); font-size: 0.7rem; padding: 16px 0; }
   @media (max-width: 480px) {
     body { padding: 8px; }
@@ -852,7 +869,69 @@ function renderDayCard(day, isLatest) {
   </div>`;
 }
 
-document.getElementById('dailyCards').innerHTML = DAYS.map((d,i) => renderDayCard(d, i === DAYS.length-1)).join('');
+// ═══════════ WEEK GROUPING ═══════════
+function getWeekNumber(dateStr) {
+  const firstDate = new Date(DAYS[0].date);
+  const currentDate = new Date(dateStr);
+  const diffDays = Math.floor((currentDate - firstDate) / (1000 * 60 * 60 * 24));
+  return Math.floor(diffDays / 7);
+}
+
+function getWeekDateRange(days) {
+  const first = days[0].date.slice(5);
+  const last = days[days.length-1].date.slice(5);
+  return first + ' – ' + last;
+}
+
+function getWeekSummary(days) {
+  let totalKcal = 0, totalProtein = 0, totalExKcal = 0, daysWithData = 0;
+  days.forEach(d => {
+    const kcal = [d.meals.breakfast, d.meals.lunch, d.meals.dinner]
+      .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
+    const protein = [d.meals.breakfast, d.meals.lunch, d.meals.dinner]
+      .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
+    if (kcal > 0) { totalKcal += kcal; totalProtein += protein; daysWithData++; }
+    totalExKcal += (d.exerciseKcal || 0);
+  });
+  if (daysWithData === 0) return '';
+  const avgKcal = Math.round(totalKcal / daysWithData);
+  const avgProtein = Math.round(totalProtein / daysWithData);
+  return '<span>🍽 日均 ' + avgKcal + ' kcal</span><span>💪 蛋白 ' + avgProtein + 'g</span><span>🏃 运动 ' + totalExKcal + ' kcal</span>';
+}
+
+function renderWeekGroup(weekDays, weekIndex, isLatestWeek) {
+  const weekNum = weekIndex + 1;
+  const dateRange = getWeekDateRange(weekDays);
+  const summary = getWeekSummary(weekDays);
+  const groupId = 'week-' + weekIndex;
+  const arrowClass = isLatestWeek ? 'open' : '';
+  const bodyClass = isLatestWeek ? '' : 'collapsed';
+
+  const daysHtml = weekDays.map((d,i) => renderDayCard(d, isLatestWeek && i === weekDays.length-1)).join('');
+
+  return '<div class="week-group">' +
+    '<div class="week-header" onclick="document.getElementById(\'' + groupId + '\').classList.toggle(\'collapsed\');this.querySelector(\'.week-arrow\').classList.toggle(\'open\');">' +
+      '<span class="week-title"><span class="week-arrow ' + arrowClass + '">▶</span> 📅 第' + weekNum + '周 Week ' + weekNum + ' · ' + dateRange + '</span>' +
+      (summary ? '<span class="week-stats">' + summary + '</span>' : '') +
+    '</div>' +
+    '<div class="week-body ' + bodyClass + '" id="' + groupId + '">' +
+      '<div class="week-day-cards">' + daysHtml + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+// Build week groups and render
+const weekGroups = {};
+DAYS.forEach(d => {
+  const wn = getWeekNumber(d.date);
+  if (!weekGroups[wn]) weekGroups[wn] = [];
+  weekGroups[wn].push(d);
+});
+const weekIndices = Object.keys(weekGroups).sort((a,b) => a-b);
+const latestWeekIdx = weekIndices.length - 1;
+document.getElementById('dailyCards').innerHTML = weekIndices.map((wn, i) =>
+  renderWeekGroup(weekGroups[wn], parseInt(wn), parseInt(wn) === parseInt(weekIndices[latestWeekIdx]))
+).join('');
 
 // Charts
 function drawWeightChart() {
@@ -1088,6 +1167,10 @@ function markSensitive() {
   });
   // Day card weight stats
   document.querySelectorAll('.day-stats span').forEach(el => {
+    if (!el.classList.contains('sensitive')) el.classList.add('sensitive');
+  });
+  // Week group stats (averages contain numbers)
+  document.querySelectorAll('.week-stats span').forEach(el => {
     if (!el.classList.contains('sensitive')) el.classList.add('sensitive');
   });
   // Current BMI display
