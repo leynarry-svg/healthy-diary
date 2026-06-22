@@ -409,6 +409,7 @@ const WEIGHTS = [
   { date: '6.18', kg: 71.7, source: '🏠' },
   { date: '6.19', kg: 71.65, source: '🏠' },
   { date: '6.20', kg: 71.4, source: '🏠' },
+  { date: '6.22', kg: 70.8, source: '🏠' },
 ];
 
 const DAYS = [
@@ -602,14 +603,48 @@ const DAYS = [
         kcal: 302, protein: 17, carb: 40.5, fat: 8,
         rating: 'good', note: '豆浆燕麦β-葡聚糖降胆固醇 + 蒸南瓜胡萝卜低GI + 拌黄瓜清爽 / Oat beta-glucan + steamed low GI veggies + cucumber',
       },
+      lunch: {
+        items: '30g荞麦面 + 1/4水果玉米 + 80g菜花拌黄瓜胡萝卜 + 8只烤罗氏虾 + 80g烤鮰鱼',
+        kcal: 435, protein: 62, carb: 33.5, fat: 6.5,
+        rating: 'good', note: '蛋白质极高！罗氏虾+鮰鱼双海鲜~55g蛋白，荞麦面低GI，菜花十字花科抗炎 / Shrimp+fish dual seafood ~55g protein, buckwheat low GI, cauliflower anti-inflammatory',
+      },
+      snack: {
+        items: '坚果碱水 1个', kcal: 160, protein: 6, carb: 28, fat: 4,
+        rating: 'good', note: '下午加餐新习惯！填补能量缺口，防止晚餐过饿 / New afternoon snack habit, bridges energy gap',
+      },
+      dinner: {
+        items: '半根水果玉米 + 半根黄瓜 + 8个圣女果 + 8个开心果',
+        kcal: 138, protein: 5.1, carb: 21.2, fat: 3.5,
+        rating: 'warn', note: '热量仍偏低但比昨日改善，开心果含健康单不饱和脂肪 / Still light but improved, pistachios add healthy MUFA',
+      },
+    },
+    exercise: '🏊 游泳 40min / 400m / 140kcal',
+    exerciseKcal: 140,
+    sleep: '23:43–7:17（7h34min，深睡1h3min）',
+    water: null,
+    supplements: '维生素D2 1粒（5000 IU，隔天一次，今日服用）',
+    symptoms: null,
+    eval: '<ul><li>🥩 蛋白质90g（106%目标）！午餐海鲜双雄（罗氏虾+鮰鱼）是最大功臣</li><li>🏊 游泳首秀！40min/400m/140kcal，全身低冲击有氧，PMOS+脂肪肝精准友好</li><li>😴 深睡1h3min优秀！睡眠质量本周最佳，入睡23:43比昨日00:58改善1h15min</li><li>🍪 下午加餐坚果碱水160kcal——新习惯，有效提升全天总摄入</li><li>🔥 全天1035kcal，比昨日803kcal改善232kcal，趋势向好</li><li>⚠️ 晚餐连续第4天偏低（138kcal），开心果的加入是正确方向，继续加量</li><li>💧 饮水未报告</li></ul>',
+    evalType: 'improve',
+  },
+  {
+    date: '2026-06-22',
+    weekday: '周一 Mon',
+    weightKg: 70.8,
+    meals: {
+      breakfast: {
+        items: '水煮蛋1个 + 海参1根 + 一碗无糖豆浆 + 40g黄瓜拌西红柿 + 20g炒茼蒿 + 黄心猕猴桃1个 + 8片蒸胡萝卜 + 一块半蒸南瓜 + 20g高压锅牛肉',
+        kcal: 294, protein: 26, carb: 30, fat: 9,
+        rating: 'good', note: '蛋白质26g达标！牛肉+蛋+海参三蛋白源 + 9种食材颜色丰富，可作模板早餐 / Protein hits target! Beef+egg+sea cucumber, 9 ingredients, template-worthy breakfast',
+      },
     },
     exercise: '',
     exerciseKcal: 0,
     sleep: '',
     water: '',
-    supplements: '维生素D2 1粒（5000 IU，隔天一次，今日服用）',
+    supplements: '休息日（昨日6/21已服D2，今日停）',
     symptoms: null,
-    eval: '<ul><li>☀️ 早餐302kcal，豆浆燕麦+蒸蔬菜+蛋，PMOS友好组合</li><li>⚖️ 今日未称空腹体重</li><li>⏳ 午餐/晚餐/运动/饮水待报</li></ul>',
+    eval: '<ul><li>⚖️ 体重141.6斤📉突破142！累计−12.2斤（6.1kg），BMI 25.7，距正常上限还需4.7kg</li><li>☀️ 早餐294kcal蛋白26g首达目标（25-30g），牛肉+蛋+海参三蛋白源，9种食材</li><li>⏳ 午餐/晚餐/运动/饮水待报</li></ul>',
     evalType: 'good',
   },
 ];
