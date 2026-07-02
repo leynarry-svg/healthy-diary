@@ -435,6 +435,7 @@ const WEIGHTS = [
   { date: '6.29',  kg: 70.05, source: '🏠' },
   { date: '6.30',  kg: 69.8, source: '🏠' },
   { date: '7.1',  kg: 69.75, source: '🏠' },
+  { date: '7.2',  kg: 70.2, source: '🏠⚠️' },
 ];
 
 const DAYS = [
@@ -953,14 +954,40 @@ const DAYS = [
         rating: 'warn', note: '✅蛋白20g达标，鸡胸肉丝优质低脂蛋白，热量155kcal略低于200目标，加半个蛋或几颗坚果可到200+ / 20g protein on target, calories slightly low at 155kcal',
       },
     },
-    exercise: '🚶 晨走 23min50s/2.27km/127kcal + 🚶 午间步行 38min/3.52km/205kcal（总332kcal）',
-    exerciseKcal: 332,
-    sleep: '00:02–8:01（7h59min，深睡59min🏅）',
+    exercise: '🚶 晨走 23min50s/2.27km/127kcal + 🚶 午间步行 38min/3.52km/205kcal + 🚶 晚间步行 25min/2.33km/138kcal（总470kcal）',
+    exerciseKcal: 470,
+    sleep: '23:36–7:49（8h13min，深睡59min🏅）',
     water: '',
     supplements: '',
     symptoms: null,
-    eval: '<ul><li>🎉 体重139.5斤新低！累计−14.3斤（7.15kg），BMI 25.3距正常还需3.55kg</li><li>🏅🏅 全天蛋白96g超标113%！三餐32→44→20，午餐44g创历史新高</li><li>🥇 蛋白密度43%（96g/896kcal），几乎每2kcal就有1g蛋白</li><li>🎉 早餐连续第4天蛋白30g+（32g），高蛋白早餐模板已稳定</li><li>💪 鸡胸肉丝午晚双登场，极致低脂高蛋白，PMOS黄金食材</li><li>🚶 晨走+午走双段332kcal，午走3.52km饭后控血糖精准有益</li><li>😴 深睡59min连续两天近1小时，7h59min接近8h优秀</li><li>⚠️ 全天896kcal低于1500目标，晚餐155kcal略低</li><li>🏅 评价：蛋白S | 午餐A+ | 早餐A | 睡眠A- | 运动B+ | 热量C+ | 晚餐B</li></ul>',
+    eval: '<ul><li>🎉 体重139.5斤新低！累计−14.3斤（7.15kg），BMI 25.3距正常还需3.55kg</li><li>🏅🏅 全天蛋白96g超标113%！三餐32→44→20，午餐44g创历史新高</li><li>🥇 蛋白密度43%（96g/896kcal），几乎每2kcal就有1g蛋白</li><li>🎉 早餐连续第4天蛋白30g+（32g），高蛋白早餐模板已稳定</li><li>💪 鸡胸肉丝午晚双登场，极致低脂高蛋白，PMOS黄金食材</li><li>🚶 晨走+午走+晚走三段470kcal，全天活动量充足覆盖</li><li>😴 入睡23:36持续改善！8h13min优秀，深睡59min连续两天近1h</li><li>⚠️ 全天896kcal低于1500目标，晚餐155kcal略低</li><li>🏅 评价：蛋白S | 午餐A+ | 早餐A | 睡眠A | 运动A- | 热量C+ | 晚餐B</li></ul>',
     evalType: 'good',
+  },
+  {
+    date: '2026-07-02',
+    weekday: '周四 Thu',
+    weightKg: 70.2,
+    meals: {
+      breakfast: {
+        items: '200ml无糖豆浆 + 50g西红柿拌黄瓜 + 水煮蛋1个 + 半个小甜薯 + 3片蒸胡萝卜 + 2片蒸土豆 + 海参1个 + 2片高压锅牛腱肉',
+        kcal: 280, protein: 28, carb: 23, fat: 8,
+        rating: 'good', note: '✅蛋白28g达标早目标！牛腱+蛋+海参+豆浆四重蛋白，8种食材，蒸/拌无油，碳水低GI / 28g protein on target, 4 protein sources, 8 ingredients, low GI carbs',
+      },
+      lunch: {
+        items: '20g糙米饭 + 6片黄瓜 + 80g西葫芦炒虾仁 + 30g绿豆芽炒肉丝 + 2片高压锅牛腱肉',
+        kcal: 190, protein: 25, carb: 11, fat: 6,
+        rating: 'warn', note: '⚠️热量190偏低，糙米饭仅20g偏少，搬宿舍日体力消耗大但午餐未补足能量，下午建议加餐 / Light lunch at 190kcal, suggest afternoon snack to bridge energy gap',
+      },
+      dinner: null,
+    },
+    exercise: '🚶 晨走 28min/2.37km/142kcal + 🏋️ 中午搬宿舍~100kcal（总242kcal）',
+    exerciseKcal: 242,
+    sleep: '',
+    water: '',
+    supplements: '',
+    symptoms: null,
+    eval: '<ul><li>⚖️ 体重140.4（⚠️测量不准仅供参考），实际可能持平139.5附近</li><li>✅ 早餐28g蛋白达标，食材8种搭配合理，低GI全食物</li><li>⚠️ 午餐190kcal偏轻+搬宿舍100kcal消耗，午后能量赤字需注意</li><li>💡 建议：下午加餐坚果+酸奶≈150kcal，晚餐补到250-300kcal</li><li>📊 截至午餐：摄入~470kcal/蛋白53g，运动242kcal</li><li>🔄 日记进行中，待晚间补充晚餐+饮水+补剂数据</li></ul>',
+    evalType: 'warn',
   },
 ];
 
