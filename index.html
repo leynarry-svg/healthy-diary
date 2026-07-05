@@ -437,6 +437,7 @@ const WEIGHTS = [
   { date: '7.1',  kg: 69.75, source: '🏠' },
   { date: '7.2',  kg: 70.2, source: '🏠⚠️' },
   { date: '7.3',  kg: 70.1, source: '🏠' },
+  { date: '7.5',  kg: 69.2, source: '🏠' },
 ];
 
 const DAYS = [
@@ -1023,6 +1024,58 @@ const DAYS = [
     supplements: '维生素D2 ✅',
     symptoms: '🌸 月经少量持续第3天，比7/2略多但仍为少量 / Light spotting day 3, slightly more than 7/2',
     eval: '<ul><li>⚖️ 140.2斤稳定140关口，比7/2测量不准的值更有参考</li><li>🏅🏅 午餐蛋白42g炸裂！海鲈鱼+猪瘦肉双引擎，Omega-3+铁双补</li><li>🎉 全天蛋白84g接近85g目标（99%），午餐是最大功臣</li><li>🚶 三段步行6km/331kcal覆盖全天，晨走+午走+晚走节奏合理</li><li>✅ 饮水1.5L达标，三餐食材~20种蔬菜水果丰富</li><li>🌸 月经少量持续第3天，PCOS调理正面信号</li><li>⚠️ 755kcal低于1500目标（50%），晚餐175kcal略低</li><li>🏅 评价：午餐蛋白S | 三餐均衡A | 运动A- | 蛋白A- | 饮水B+ | 热量C+ | 🌸</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-04',
+    weekday: '周六 Sat',
+    weightKg: null,
+    meals: {
+      breakfast: null,
+      lunch: {
+        items: '80g冬瓜蒸鸡胸肉 + 50g酸辣藕尖儿 + 2块酱牛肉 + 1小块黄瓜 + 50g杂粮饭',
+        kcal: 235, protein: 30, carb: 20, fat: 4,
+        rating: 'good', note: '🏅蛋白30g达标！鸡胸肉+酱牛肉双蛋白，冬瓜清爽低卡，杂粮饭低GI，酸辣藕尖儿开胃 / 30g protein on target! Chicken breast + beef shank, winter melon light & fresh',
+      },
+      dinner: {
+        items: '1个水煮鸡蛋清 + 20g鸡胸肉 + 1块酱牛肉 + 60g丝瓜炒鸡蛋 + 40g黄瓜拌西红柿 + 40g白地瓜',
+        kcal: 155, protein: 19, carb: 11, fat: 4,
+        rating: 'warn', note: '✅蛋白19g达标，四重低脂蛋白密度极高49%，热量155略低，加半个蛋黄或坚果轻松到200 / 19g protein, excellent density, slightly low calories',
+      },
+    },
+    exercise: '🏃 室内超慢跑 40min/321kcal',
+    exerciseKcal: 321,
+    sleep: '23:38–7:02（7h24min，深睡46min）',
+    water: '',
+    supplements: '',
+    symptoms: '🌸 月经暂停（7/1-7/3少量出血后停止）',
+    eval: '<ul><li>📊 缺早餐数据，午晚餐合计~390kcal/49g蛋白</li><li>🏅 午餐蛋白30g达标，鸡胸肉+酱牛肉双核稳定</li><li>🔥 超慢跑40min/321kcal消耗优秀，室内低冲击</li><li>🎉 入睡23:38回到23:30区间！比前两日0:00改善显著</li><li>⚠️ 深睡46min偏低，全天热量不足，缺早餐</li><li>🏅 评价：蛋白密度A | 运动A | 入睡改善A | 深睡C+</li></ul>',
+    evalType: 'warn',
+  },
+  {
+    date: '2026-07-05',
+    weekday: '周日 Sun',
+    weightKg: 69.2,
+    meals: {
+      breakfast: null,
+      lunch: {
+        items: '1个煮鸡蛋 + ¼玉米',
+        kcal: 98, protein: 7, carb: 7, fat: 5,
+        rating: 'warn', note: '⚠️热量极低仅98kcal/7g蛋白，午餐严重不足，可能因下午安排匆忙 / Very light lunch at 98kcal, likely rushed',
+      },
+      dinner: {
+        items: '13.5个全麦皮韭菜肉虾仁水饺 🥟',
+        kcal: 540, protein: 50, carb: 65, fat: 16,
+        rating: 'good', note: '🏅水饺盛宴！全麦皮低GI+韭菜纤维+虾仁低脂高蛋白，13.5个分量足，50g蛋白一餐封神 / Whole wheat dumplings! 50g protein in one meal, chives + shrimp classic combo',
+      },
+    },
+    exercise: '',
+    exerciseKcal: 0,
+    sleep: '23:11–7:38（8h27min，深睡57min🏅）',
+    water: '',
+    supplements: '',
+    symptoms: null,
+    eval: '<ul><li>🎉 体重138.4斤新低！累计−15.4斤（7.7kg），BMI 25.1距正常仅1.1</li><li>🏅 晚餐水饺50g蛋白一餐封神，全麦皮低GI健康</li><li>🏅 入睡23:11连续改善！趋势0:00→23:38→23:11，进入黄金区间</li><li>✅ 深睡57min良好，时长8h27min优秀</li><li>⚠️ 午晚餐分布不均衡（午15%晚85%），午餐过轻</li><li>🏅 评价：体重趋势S | 睡眠S | 晚餐蛋白S | 午餐C- | 均衡D</li></ul>',
     evalType: 'good',
   },
 ];
