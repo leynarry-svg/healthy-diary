@@ -532,6 +532,7 @@ const WEIGHTS = [
   { date: '7.5',  kg: 69.2, source: '🏠' },
   { date: '7.6',  kg: 68.2, source: '🏠' },
   { date: '7.7',  kg: 68.25, source: '🏠' },
+  { date: '7.8',  kg: 69.2, source: '🏠⚠️' },
 ];
 
 const DAYS = [
@@ -1213,24 +1214,54 @@ const DAYS = [
         rating: 'good', note: '✅蛋白24g大幅改善（昨日11g）！酱牛肉回归+蛋+豆浆三重蛋白，紫甘蓝苹果花青素，奇亚籽常驻，食材8种 / 24g protein — big improvement! Beef back + egg + soy milk, 8 ingredients, red cabbage for anthocyanins',
       },
       lunch: {
-        items: '（待更新 / Pending）',
-        kcal: null, protein: null, carb: null, fat: null,
-        rating: null, note: '',
+        items: '80g海鲈鱼 + 180g杂粮饭 + 5个圣女果 + 100g西红柿炒大头菜',
+        kcal: 370, protein: 22, carb: 56, fat: 7,
+        rating: 'good', note: '海鲈鱼低脂高蛋白+Omega-3，杂粮饭180g主动加量（往日仅50-80g）有效补热量，西红柿炒大头菜膳食纤维 / Sea bass + Omega-3, larger grain portion boosts calories',
       },
       dinner: {
-        items: '（待更新 / Pending）',
-        kcal: null, protein: null, carb: null, fat: null,
-        rating: null, note: '',
+        items: '日料盛宴🍣：水煮蛋1个(去半蛋黄) + 酱牛肉4片 + 烤红薯2片 + 胡萝卜3片 + ½玉米 + 芹菜拌胡萝卜70g + 圣女果6个 + 生三文鱼4片 + 金枪鱼中腩1片 + 酱鱿鱼半个 + 鳗鱼寿司1个 + 甜虾寿司2个 + 海胆板面1口 + 千丝万缕虾半个 + 银鳕鱼天妇罗1块',
+        kcal: 840, protein: 73, carb: 65, fat: 27,
+        rating: 'good', note: '🏅🏅蛋白73g一餐超全天85%！三文鱼+金枪鱼Omega-3抗炎降脂对HDL-C精准有益，海陆空多重蛋白。⚠️日料高钠是次日+1.9斤水潴留主因 / 73g protein! Omega-3 rich, but high sodium causes next-day water retention',
       },
     },
     exercise: '🚶 晨走通勤 2.32km/25min/148kcal',
     exerciseKcal: 148,
     sleep: '23:50–7:27（7h37min）',
-    water: '',
-    supplements: '维生素D2 1粒 ✅ · 💊易善复 早2粒 ✅',
+    water: '1.5L ✅',
+    supplements: '维生素D2 1粒 ✅ · 💊易善复 早中晚各2粒 ✅',
     symptoms: null,
-    eval: '<ul><li>⚖️ 136.5斤（68.25kg），BMI 24.8，稳定在24区间</li><li>✅ 早餐蛋白24g比昨日11g翻倍！酱牛肉回归+蛋+豆浆三重蛋白</li><li>🚶 晨走2.32km/25min/148kcal，快走节奏保持</li><li>💊 保肝药（易善复）今日开服！早中晚各2粒，为期1个月</li><li>😴 23:50–7:27（7h37min），连续第4天不过零点👏</li><li>🩺 协和田秦杰：保肝1月→8月复查→肝功正常后月经不调则开雌激素</li><li>📊 进行中，午晚餐待更新</li></ul>',
-    evalType: 'partial',
+    eval: '<ul><li>🎉🎉 摄入1506kcal，建档以来首次热量真正达标！终于摆脱长期赤字</li><li>🏅🏅 全天蛋白118g爆表（139%目标），晚餐日料73g是最大功臣</li><li>🍣 日料盛宴：三文鱼+金枪鱼中腩Omega-3丰富，对唯一警报HDL-C 0.71精准有益</li><li>🍚 午餐杂粮饭主动加量180g，有效提升热量</li><li>⚠️ 日料高钠，导致次日体重反弹+1.9斤（水潴留非脂肪）</li><li>💊 保肝药易善复随三餐各2粒（今日开服，往后默认执行）</li><li>😴 23:50–7:27（7h37min）连续第4天不过零点👏</li><li>🏅 评价：热量达标S🎉 | 蛋白S | Omega-3 A+ | 均衡B | 钠C+</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-08',
+    weekday: '周三 Wed',
+    weightKg: 69.2,
+    meals: {
+      breakfast: {
+        items: '水煮蛋1个 + 南瓜2小块 + 胡萝卜4片 + 黄心猕猴桃2片 + 秋葵50g + 基围虾2个 + 土豆片2块 + 无糖豆浆200ml',
+        kcal: 254, protein: 18, carb: 31, fat: 8,
+        rating: 'warn', note: '🌿秋葵首秀！黏液蛋白+可溶纤维稳血糖降胆固醇。蛋+虾+豆浆三蛋白，但~18g偏低（缺酱牛肉/海参），午餐鸡胸肉已补 / Okra debut! But 18g protein a bit low, missing beef',
+      },
+      lunch: {
+        items: '100g鸡胸肉 + 50g杂粮饭 + 60g炒豆芽 + 50g黄瓜拌菜花 + 5个口蘑 + 5个圣女果 + 4个开心果 + 1个杏仁',
+        kcal: 330, protein: 40, carb: 28, fat: 10,
+        rating: 'good', note: '🏅🏅蛋白40g远超目标30g！鸡胸肉100g(~31g)是MVP，口蘑+豆芽+菜花+黄瓜多蔬菜，杂粮饭低GI / 40g protein! Chicken breast MVP, rich veggies',
+      },
+      dinner: {
+        items: '60g鸡胸肉 + ½煮玉米 + 水煮鸡蛋清1个 + 菜花拌黄瓜50g + 圣女果9个 + 胡萝卜2片 + 开心果4个 + 杏仁1个',
+        kcal: 253, protein: 26, carb: 24, fat: 6,
+        rating: 'good', note: '🏅晚餐253kcal破200+！蛋白26g达标，鸡胸+蛋清双低脂蛋白密度41%，多色蔬菜+坚果，稳定PMOS晚餐模板 / 253kcal, 26g protein, stable dinner template',
+      },
+    },
+    exercise: '🚲 晨骑 2.3km/40kcal',
+    exerciseKcal: 40,
+    sleep: '0:10–7:44（7h34min）',
+    water: '2L ✅🏅',
+    supplements: '维生素D2（隔天·今日停）· 💊易善复 随三餐各2粒',
+    symptoms: null,
+    eval: '<ul><li>📈 138.4斤（69.2kg）比昨日+1.9斤，为前晚日料高钠水潴留非脂肪，1-2天可回落，别焦虑</li><li>✅ 蛋白83g（98%目标），午餐40g🏅+晚餐26g双达标</li><li>🌿 秋葵首秀，稳血糖降胆固醇，PMOS超级食材+1</li><li>✅ 晚餐253kcal连续达标，鸡胸肉贯穿午晚双餐</li><li>⚠️ 热量837kcal又回落（昨日1506刚达标），日料后清淡可理解但别连续低</li><li>⚠️ 运动仅40kcal全周最低，建议傍晚补有氧代谢昨日高钠</li><li>⚠️ 入睡0:10过零点，中断连续4天势头，今晚拉回23:30前</li><li>🏅 评价：午餐蛋白A | 晚餐A | 新食材A- | 蛋白A- | 热量C | 运动C | 睡眠B-</li></ul>',
+    evalType: 'good',
   },
 ];
 
