@@ -534,6 +534,7 @@ const WEIGHTS = [
   { date: '7.7',  kg: 68.25, source: '🏠' },
   { date: '7.8',  kg: 69.2, source: '🏠⚠️' },
   { date: '7.9',  kg: 69.0, source: '🏠🍽️' },
+  { date: '7.10', kg: 69.05, source: '🏠👕' },
 ];
 
 const DAYS = [
@@ -2365,9 +2366,9 @@ const DAYS = [
     weightKg: 69.0,
     meals: {
       breakfast: {
-        items: '4片酱牛肉 + 水煮蛋1个 + 150ml纯燕麦片 + ¼玉米 + 一片地瓜 + 2片土豆片 + 3片胡萝卜 + 50g黄瓜拌西红柿',
-        kcal: 355, protein: 28, carb: 40, fat: 12,
-        rating: 'good', note: '🎉蛋白28g达标！酱牛肉4片(~18g)+蛋主力，比昨日18g明显回升。纯燕麦β-葡聚糖降胆固醇对HDL-C友好，玉米+地瓜+土豆低GI / 28g protein! Beef back, oats lower cholesterol',
+        items: '4片酱牛肉 + 水煮蛋1个 + 200g燕麦泡水 + 1片白薯 + 1片土豆片 + 2片胡萝卜 + 50g黄瓜拌西红柿',
+        kcal: 345, protein: 27, carb: 38, fat: 11,
+        rating: 'good', note: '✅蛋白27g达标！酱牛肉4片(~18g)+蛋主力，比昨日18g明显回升。燕麦β-葡聚糖降胆固醇对HDL-C友好，白薯+土豆低GI / 27g protein! Beef back, oats lower cholesterol',
       },
       dinner: {
         items: '大基围虾3.5个 + 小基围虾3个 + 胡萝卜1片 + 土豆1片 + 炒豆芽20g',
@@ -2404,12 +2405,54 @@ const DAYS = [
     eval: '<ul><li>📉 138斤（69.0kg，饭后测）比昨日空腹138.4已降0.4斤，日料水潴留消退中，符合预期！</li><li>💡 今为"饭后"体重通常比空腹高0.5-1斤，实际空腹应更低，明晨空腹再测更准</li><li>🎉 早午蛋白双达标：早餐28g+午餐30g=58g，酱牛肉贯穿两餐</li><li>🔴🔴 晚餐仅90kcal/15g蛋白——6.5只虾撑不起一顿晚餐，无蔬菜无主食，全天840kcal</li><li>⚠️ 全天绿叶蔬菜几乎为零（仅黄瓜+圣女果+胡萝卜+豆芽），第二天摄入不足（837→840）</li><li>🔴 睡眠6h50min不足+入睡0:33连续第2天过零点（0:10→0:33更晚），今晚务必拉回23:30前</li><li>🏅 评价：早午蛋白A | 晚餐D | 热量D | 营养结构C | 睡眠C-</li></ul>',
     evalType: 'warn',
   },
-    exerciseKcal: 0,
-    sleep: '0:33–7:23（6h50min，深睡52min）',
-    water: '',
-    supplements: '维生素D2（隔天·今日应服）· 💊易善复 随三餐各2粒',
+  {
+    date: '2026-07-10',
+    weekday: '周五 Fri',
+    weightKg: 69.05,
+    meals: {
+      breakfast: {
+        items: '全麦馄饨5-6个 + 荷包蛋1个 + 馄饨汤50g + ¼玉米 + 圣女果4个 + 白薯2块 + 胡萝卜3片',
+        kcal: 360, protein: 16, carb: 48, fat: 9,
+        rating: 'good', note: '🌾全麦馄饨首秀！全麦皮低GI+高纤维PMOS友好。蛋白16g略低（目标25-30g），建议搭2片酱牛肉或1杯豆浆轻松+10g蛋白 / Whole wheat wonton debut! Protein a bit low, add beef or soy milk',
+      },
+      lunch: {
+        items: '海鲈鱼80g + 红豆杂豆10g + 炒油菜胡萝卜片60g + 全麦黄瓜肉馅饺子8-9个 + 圣女果4个',
+        kcal: 570, protein: 42, carb: 55, fat: 14,
+        rating: 'great', note: '🏅蛋白42g远超目标30g！海鲈鱼(~20g)+饺子肉馅(~18g)双核驱动，全麦饺子+红豆双重新食材🌾 / 42g protein! Sea bass + whole wheat dumplings, 2 new foods',
+      },
+      dinner: {
+        items: '西葫芦西兰花炒胡萝卜片60g + 酱牛肉4片 + ½玉米 + 白薯2块 + 水煮鸡蛋清1个 + 胡萝卜2片 + 圣女果4个',
+        kcal: 260, protein: 16, carb: 38, fat: 4,
+        rating: 'good', note: '🏅热量260kcal突破200+！酱牛肉+蛋清双低脂蛋白，三色蔬菜，晚餐模板成型：酱牛肉4片+蛋清+½玉米+白薯+蔬菜=260kcal/16g蛋白 / 260kcal! Dinner template stable',
+      },
+    },
+    exercise: '🏃 跑步机爬坡 1h / 4.2km / 315kcal',
+    exerciseKcal: 315,
+    sleep: '00:02–7:40（7h38min）',
+    water: '1.2L ⚠️ 偏少（目标1.5L）',
+    supplements: '维生素D2 1粒（晚上服用）· 💊易善复 随三餐各2粒',
     symptoms: null,
-    eval: '<ul><li>📉 138斤（69.0kg，饭后测）比昨日空腹138.4已降0.4斤，日料水潴留消退中，符合预期！</li><li>💡 今为"饭后"体重通常比空腹高0.5-1斤，实际空腹应更低，明晨空腹再测更准</li><li>🎉 早午蛋白双达标：早餐28g+午餐30g=58g，酱牛肉贯穿两餐</li><li>⚠️ 午餐碳水偏高（玉米+白薯+土豆+胡萝卜4种淀粉），晚餐建议补绿叶蔬菜+控淀粉</li><li>🔴 睡眠6h50min不足+入睡0:33连续第2天过零点（0:10→0:33更晚），今晚务必拉回23:30前</li><li>✅ 深睡52min中等</li><li>📊 进行中，晚餐+运动待更新</li></ul>',
+    eval: '<ul><li>📉 138.1斤（69.05kg，穿衣测），日料高钠水潴留已消退，回到138正常区间</li><li>🎉 1190kcal近5天最高！（895→1506→837→840→1190📈），终于爬出800+低谷</li><li>🏅 午餐42g蛋白！海鲈鱼+全麦饺子双核，全麦馄饨🌾+全麦饺子+红豆三重食材首秀</li><li>✅ 晚餐260kcal连续达标（7/8:253→7/10:260），酱牛肉+蛋清+½玉米+白薯+蔬菜模板稳定</li><li>🏃 爬坡1h/4.2km/315kcal耐力优秀，有氧+力量交替保持好</li><li>⚠️ 蛋白74g（85g的87%），早餐16g偏低是主因</li><li>⚠️ 1190kcal仍低于1500（79%），但趋势明显改善</li><li>⚠️ 饮水1.2L偏少（目标1.5L），入睡00:02刚过零点待改善</li><li>🏅 评价：热量改善A | 午餐蛋白S | 晚餐A | 运动A- | 新食材A | 蛋白B+ | 睡眠B-</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-11',
+    weekday: '周六 Sat',
+    weightKg: null,
+    meals: {
+      breakfast: {
+        items: '高压锅牛肉3片 + 土豆片1片 + 水煮蛋1个 + 苦瓜4条 + 西柚30g + 大头菜炒西红柿50g + 奇亚籽无糖豆浆200ml',
+        kcal: 320, protein: 25, carb: 24, fat: 10,
+        rating: 'good', note: '✅蛋白25g达标！牛肉+蛋+豆浆三重蛋白。苦瓜降糖降脂+西柚🍊首秀低GI促代谢，奇亚籽豆浆常驻，7种食材搭配丰富 / 25g protein! Bitter gourd + pomelo debut, chia soy milk staple',
+      },
+    },
+    exercise: null,
+    exerciseKcal: 0,
+    sleep: '00:02–7:40（7h38min）',
+    water: null,
+    supplements: '💊易善复 随餐',
+    symptoms: null,
+    eval: '<ul><li>🌅 早上已记录，午晚餐待更新</li><li>✅ 早餐蛋白25g达标，苦瓜+西柚🍊双苦降糖组合</li><li>⏳ 今天记得报空腹体重、午餐、晚餐、运动、饮水</li></ul>',
     evalType: 'partial',
   },
 ];
