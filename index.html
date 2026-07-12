@@ -535,6 +535,7 @@ const WEIGHTS = [
   { date: '7.8',  kg: 69.2, source: '🏠⚠️' },
   { date: '7.9',  kg: 69.0, source: '🏠🍽️' },
   { date: '7.10', kg: 69.05, source: '🏠👕' },
+  { date: '7.12', kg: 68.3, source: '🏠' },
 ];
 
 const DAYS = [
@@ -1335,15 +1336,55 @@ const DAYS = [
         kcal: 320, protein: 25, carb: 24, fat: 10,
         rating: 'good', note: '✅蛋白25g达标！牛肉+蛋+豆浆三重蛋白。苦瓜降糖降脂+西柚🍊首秀低GI促代谢 / 25g protein! Bitter gourd + pomelo debut',
       },
+      lunch: {
+        items: '黄瓜丝拌鸡胸肉拌荞麦面100g + 炒油菜炒蘑菇炒胡萝卜片50g + 土豆片1片 + 杂豆10g',
+        kcal: 365, protein: 22, carb: 48, fat: 7,
+        rating: 'good', note: '鸡胸肉+荞麦面低GI经典组合，油菜蘑菇胡萝卜三色蔬菜，简洁高效 / Chicken breast + buckwheat noodles, balanced',
+      },
+      dinner: {
+        items: '🍲火锅/水煮：吊龙150g + 干豆腐皮15g + 水煮基围虾2个 + 土豆片3片 + 冬瓜2片(50g) + 西红柿2块 + 香菇3片 + 海鲜菇10g + 油麦菜20g',
+        kcal: 430, protein: 42, carb: 20, fat: 18,
+        rating: 'great', note: '🏅蛋白42g爆表！吊龙150g(~30g蛋白)MVP，干豆腐皮首秀+多种菌菇蔬菜，430kcal本日记晚餐最高纪录 / 42g protein! Beef tenderloin + tofu skin + shrimp',
+      },
     },
-    exercise: null,
-    exerciseKcal: 0,
-    sleep: '00:02–7:40（7h38min）',
-    water: null,
+    exercise: '🚶步行2.67km（188kcal）+ 💃跳舞80min（800kcal）',
+    exerciseKcal: 988,
+    sleep: null,
+    water: '1L ⚠️ 偏少（目标1.5L）',
     supplements: '💊易善复 随餐',
     symptoms: null,
-    eval: '<ul><li>🌅 早上已记录，午晚餐待更新</li><li>✅ 早餐蛋白25g达标，苦瓜+西柚🍊双苦降糖组合</li><li>⏳ 今天记得报空腹体重、午餐、晚餐、运动、饮水</li></ul>',
-    evalType: 'partial',
+    eval: '<ul><li>🔥🔥 运动988kcal创单日新高！跳舞80min/800kcal🏅超级MVP</li><li>🏅 蛋白质89g超标（105%）！晚餐吊龙42g+干豆腐皮+虾三重蛋白</li><li>🎉 1115kcal近5天第二高，晚餐430kcal🏅本日记晚餐最高纪录</li><li>🍲 火锅/水煮是PMOS友好聚餐方式——高蛋白+多蔬菜+少油</li><li>🔴 饮水1L严重不足（运动爆发日出汗多需2L+），净摄入仅127kcal缺口大</li><li>💡 跳舞日建议：运动前加一份快碳，运动后30min补蛋白</li><li>🏅 评价：运动S🔥 | 晚餐S | 蛋白S | 三餐均衡A | 饮水D</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-12',
+    weekday: '周日 Sun',
+    weightKg: 68.3,
+    meals: {
+      breakfast: {
+        items: '木耳拌黄瓜片70g + 胡萝卜3片 + 土豆片2片 + 红薯2小块 + 圣女果3个 + 水煮蛋1个 + 藜麦全麦奇亚籽西葫芦鸡蛋饼1个',
+        kcal: 420, protein: 18.5, carb: 43, fat: 14,
+        rating: 'good', note: '🌮藜麦全麦奇亚籽西葫芦鸡蛋饼首秀！三重超级食材合一。蛋白18.5g略低 / Quinoa+chia+zucchini pancake debut!',
+      },
+      lunch: {
+        items: '虾子西葫芦鸡蛋饼15g + 木耳炒海鲜菇炒油麦菜炒瘦肉丝50g + 杂粮饭30g + 柠檬鸡胸肉水煮40g',
+        kcal: 260, protein: 23, carb: 28, fat: 4,
+        rating: 'good', note: '柠檬鸡胸🍋清新开胃+瘦肉丝+虾仁三重低脂蛋白，杂粮饭低GI，蔬菜4种 / Lemon chicken + lean meat + shrimp, clean protein',
+      },
+      afternoon: {
+        items: '🍖烤肉/韩式：牛瘦肉200g + 猪五花100g + 土豆片4片 + 红薯片4片 + 蔬菜沙拉180g + 生菜叶3片 + 口蘑1个',
+        kcal: 935, protein: 65, carb: 55, fat: 50,
+        rating: 'good', note: '🏅蛋白65g一餐封神！牛瘦肉200g(~52g蛋白)超级MVP。猪五花脂肪40g偏高但生菜包裹烤肉吃法天然合理 / 65g protein! Beef + pork belly BBQ with lettuce wraps',
+      },
+    },
+    exercise: '🚶步行1.42km（85kcal）+ 🏃健身房爬坡50min/3.87km/290kcal（海拔134m）',
+    exerciseKcal: 375,
+    sleep: null,
+    water: '1L ⚠️ 偏少（目标1.5L）',
+    supplements: '维生素D2 1粒（5000 IU，隔天一次）· 💊易善复 随餐',
+    symptoms: null,
+    eval: '<ul><li>📉 136.6斤（68.3kg）🎉创新低！距BMI正常24.0仅差2.2kg</li><li>🎉🎉 1615kcal已超额完成1500目标（108%），且晚餐尚未计入！</li><li>🏅 蛋白质106.5g超标（125%），牛瘦肉200g立大功</li><li>🏃 爬坡50min/3.87km/海拔134m——配速4.6km/h比之前快</li><li>🌮 藜麦全麦奇亚籽西葫芦鸡蛋饼首秀！创意早餐新高度</li><li>⚠️ 脂肪68g偏高（38%），猪五花100g是主因，单日可接受</li><li>💧 饮水1L不足，运动日+烤肉高钠需至少2L</li><li>⏳ 晚间如果还吃晚餐注意从简（蔬菜+少量蛋白即可）</li><li>🏅 阶段评价：热量达标S🎉 | 蛋白S | 爬坡A | 早餐创意A- | 饮水C</li></ul>',
+    evalType: 'good',
   },
 ];
 
@@ -1375,9 +1416,9 @@ const lostKg = (startW - latestW.kg).toFixed(1);
 const toTarget = (latestW.kg - PROFILE.targetKg[1]).toFixed(1);
 
 const today = DAYS[DAYS.length-1]; // 最新一天
-const todayKcal = [today.meals.breakfast, today.meals.lunch, today.meals.dinner]
+const todayKcal = [today.meals.breakfast, today.meals.lunch, today.meals.afternoon, today.meals.dinner]
   .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
-const todayProtein = [today.meals.breakfast, today.meals.lunch, today.meals.dinner]
+const todayProtein = [today.meals.breakfast, today.meals.lunch, today.meals.afternoon, today.meals.dinner]
   .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
 
 const dailySummaryData = [
@@ -1503,9 +1544,9 @@ function renderEnergyBalance(day, totalKcal) {
 
 function renderDayCard(day, isLatest) {
   const id = 'day-' + (dayIdCounter++);
-  const totalKcal = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
+  const totalKcal = [day.meals.breakfast, day.meals.lunch, day.meals.afternoon, day.meals.dinner]
     .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
-  const totalProtein = [day.meals.breakfast, day.meals.lunch, day.meals.dinner]
+  const totalProtein = [day.meals.breakfast, day.meals.lunch, day.meals.afternoon, day.meals.dinner]
     .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
   const arrowClass = isLatest ? 'open' : '';
   const bodyClass = isLatest ? '' : 'collapsed';
@@ -1521,6 +1562,7 @@ function renderDayCard(day, isLatest) {
     <div class="day-body ${bodyClass}" id="${id}">
       ${renderMealBlock('Breakfast','早餐',day.meals.breakfast,'🌅')}
       ${renderMealBlock('Lunch','午餐',day.meals.lunch,'☀️')}
+      ${day.meals.afternoon ? renderMealBlock('Afternoon','下午餐',day.meals.afternoon,'🌤️') : ''}
       ${renderMealBlock('Dinner','晚餐',day.meals.dinner,'🌙')}
       ${renderEnergyBalance(day, totalKcal)}
       <div class="lifestyle-row">
@@ -1552,9 +1594,9 @@ function getWeekDateRange(days) {
 function getWeekSummary(days) {
   let totalKcal = 0, totalProtein = 0, totalExKcal = 0, daysWithData = 0;
   days.forEach(d => {
-    const kcal = [d.meals.breakfast, d.meals.lunch, d.meals.dinner]
+    const kcal = [d.meals.breakfast, d.meals.lunch, d.meals.afternoon, d.meals.dinner]
       .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
-    const protein = [d.meals.breakfast, d.meals.lunch, d.meals.dinner]
+    const protein = [d.meals.breakfast, d.meals.lunch, d.meals.afternoon, d.meals.dinner]
       .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
     if (kcal > 0) { totalKcal += kcal; totalProtein += protein; daysWithData++; }
     totalExKcal += (d.exerciseKcal || 0);
@@ -1656,7 +1698,7 @@ function drawKcalChart() {
   if (ctx._chart) ctx._chart.destroy();
   const dates = DAYS.map(d=>d.date.slice(5));
   const kcals = DAYS.map(d=>{
-    return [d.meals.breakfast,d.meals.lunch,d.meals.dinner].filter(Boolean).reduce((s,m)=>s+(m.kcal||0),0);
+    return [d.meals.breakfast,d.meals.lunch,d.meals.afternoon,d.meals.dinner].filter(Boolean).reduce((s,m)=>s+(m.kcal||0),0);
   });
   ctx._chart = new Chart(ctx, {
     type: 'bar',
