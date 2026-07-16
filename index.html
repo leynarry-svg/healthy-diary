@@ -258,6 +258,36 @@
 <!-- ═══════════ PANEL: 每日日记 ═══════════ -->
 <div class="panel active" id="panel-daily">
   <div class="summary-row" id="dailySummary"></div>
+
+  <!-- ═══════════ 建档满月总结 / One-Month Milestone（2026-06-15 建档 → 2026-07-16）═══════════ -->
+  <div class="card" style="background:linear-gradient(135deg,#f3f8f0,#fdfbf5);border:1.5px solid var(--accent);">
+    <h2>🏆 建档满月总结 / One-Month Milestone　<span style="font-size:0.72rem;color:var(--muted);font-weight:400;">2026-06-15 → 2026-07-16</span></h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
+      <div style="flex:1;min-width:105px;background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow);">
+        <div style="font-size:1.12rem;font-weight:800;color:var(--accent);">−8.1 斤</div>
+        <div style="font-size:0.67rem;color:var(--muted);">建档月减重 71.85→67.8kg<br>自6/7基线累计 −18.2斤</div>
+      </div>
+      <div style="flex:1;min-width:105px;background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow);">
+        <div style="font-size:1.12rem;font-weight:800;color:var(--accent);">BMI 24.6</div>
+        <div style="font-size:0.67rem;color:var(--muted);">26.1 → 24.6<br>距正常24.0仅差1.67kg</div>
+      </div>
+      <div style="flex:1;min-width:105px;background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow);">
+        <div style="font-size:1.12rem;font-weight:800;color:var(--accent);">S3 → S0</div>
+        <div style="font-size:0.67rem;color:var(--muted);">🫁 脂肪肝完全消失<br>CAP 287→239（7/5复查）</div>
+      </div>
+      <div style="flex:1;min-width:105px;background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow);">
+        <div style="font-size:1.12rem;font-weight:800;color:var(--accent);">1h27min</div>
+        <div style="font-size:0.67rem;color:var(--muted);">😴 深睡建档新高<br>~50min起步五连升</div>
+      </div>
+    </div>
+    <ul style="font-size:0.78rem;line-height:1.8;padding-left:1.2em;">
+      <li>🩸 <b>血脂血肝全线改善</b>：甘油三酯 2.27→1.11 腰斩正常 · 总胆固醇 6.32→4.91 正常 · ALT 105→76（↓28%）</li>
+      <li>🌸 月经出现恢复信号（7/1），协和方案：8月复查肝功能后视情况用药</li>
+      <li>💪 运动多样性 S 级：步行/爬坡/游泳/跳舞/羽毛球/力量/骑行，日均 ~400kcal，蛋白达标率持续上升</li>
+      <li>⚠️ <b>下月三重点</b>：① 热量提升至1200-1500（当前日均~1000偏低）② HDL-C 0.71偏低 → 建议开始 Omega-3 ③ 饮水稳定 1.5L+</li>
+    </ul>
+  </div>
+
   <div id="dailyCards"></div>
 </div>
 
@@ -538,6 +568,8 @@ const WEIGHTS = [
   { date: '7.12', kg: 68.3, source: '🏠' },
   { date: '7.13', kg: 68.55, source: '🏠' },
   { date: '7.14', kg: 68.55, source: '🏠' },
+  { date: '7.15', kg: 68.05, source: '🏠' },
+  { date: '7.16', kg: 67.8, source: '🏠' },
 ];
 
 const DAYS = [
@@ -1451,7 +1483,7 @@ const DAYS = [
   {
     date: '2026-07-15',
     weekday: '周三 Wed',
-    weightKg: null,
+    weightKg: 68.05,
     meals: {
       breakfast: {
         items: '紫甘蓝苹果丝70g + 白薯2小块 + 蒸胡萝卜4片 + 水煮玉米1/4个 + 生菜2片 + 脱脂牛奶奇亚籽200g + 肉蒸荷包蛋1个',
@@ -1475,13 +1507,13 @@ const DAYS = [
     water: null,
     supplements: '💊易善复 随餐',
     symptoms: null,
-    eval: '<ul><li>🎉 深睡1h22min🏅创建档以来新高！（此前最佳7/14的1h9min）</li><li>🎉 晚餐275kcal/27g蛋白双达标🏅！牛肉+蛋+海参三重蛋白</li><li>✅ 全天1140kcal是近一周较高摄入，蛋白75g（88%）三餐21→27→27均衡</li><li>🚶 步行8.06km/452kcal逼近7/13的8.21km纪录，NEAT持续高水平</li><li>🍳 肉蒸荷包蛋首秀+全麦饺子皮低GI改良，食材创意持续</li><li>⚠️ 睡眠7h21min略低于7.5h目标，入睡23:54偏晚</li><li>⚖️ 体重未称，明早可补</li><li>🏅 评价：深睡S | 晚餐A+ | 步行A | 蛋白B+ | 热量B−</li></ul>',
+    eval: '<ul><li>📉 136.1斤（68.05kg）🎉击穿7/12的136.6创新低！比7/14降1.0斤</li><li>🎉 深睡1h22min🏅创建档以来新高！（此前最佳7/14的1h9min）</li><li>🎉 晚餐275kcal/27g蛋白双达标🏅！牛肉+蛋+海参三重蛋白</li><li>✅ 全天1140kcal是近一周较高摄入，蛋白75g（88%）三餐21→27→27均衡</li><li>🚶 步行8.06km/452kcal逼近7/13的8.21km纪录，NEAT持续高水平</li><li>🍳 肉蒸荷包蛋首秀+全麦饺子皮低GI改良，食材创意持续</li><li>⚠️ 睡眠7h21min略低于7.5h目标，入睡23:54偏晚</li><li>🏅 评价：体重新低S | 深睡S | 晚餐A+ | 步行A | 蛋白B+ | 热量B−</li></ul>',
     evalType: 'good',
   },
   {
     date: '2026-07-16',
     weekday: '周四 Thu',
-    weightKg: null,
+    weightKg: 67.8,
     meals: {
       breakfast: {
         items: '杂豆5g（红豆+鹰嘴豆）+ 水煮蛋1个 + 生菜40g + 黄瓜拌西红柿60g + 玉米1/4个 + 白薯2块 + 蒸胡萝卜2片 + 脱脂牛奶奇亚籽200ml',
@@ -1505,7 +1537,7 @@ const DAYS = [
     water: null,
     supplements: '💊易善复 随餐',
     symptoms: null,
-    eval: '<ul><li>🎉🎉 深睡1h27min🏅连续两天刷新建档纪录！五连升：52min→1h6→1h9→1h22→1h27，睡眠进入黄金期📈</li><li>🔥 力量训练回归🏅（上次7/5）！练背215kcal——增肌提升胰岛素敏感性，PMOS最关键运动</li><li>🏅 午餐38g蛋白超目标！蛋饺🥟+杂豆🫘+山药泥三首秀</li><li>🎉 晚餐237kcal/22g连续两天双达标，全天蛋白78g（92%）接近达标</li><li>🏃 全天运动559kcal：步行+单车+力量三模式，多样性优秀</li><li>⚠️ 脂肪占比33%偏高（蛋饺是主因），偶尔可接受</li><li>⚠️ 热量1075kcal（72%目标），力量日建议加一份加餐（无糖酸奶+坚果）</li><li>🏅 评价：深睡S | 午餐蛋白A | 晚餐A | 力量回归A | 蛋白A− | 热量C+</li></ul>',
+    eval: '<ul><li>📉 135.6斤（67.8kg）🎉🎉连续两天创新低！BMI 24.6，距正常24仅1.67kg（约3.3斤），累计−18.2斤</li><li>🎉🎉 深睡1h27min🏅连续两天刷新建档纪录！五连升：52min→1h6→1h9→1h22→1h27，睡眠进入黄金期📈</li><li>🔥 力量训练回归🏅（上次7/5）！练背215kcal——增肌提升胰岛素敏感性，PMOS最关键运动</li><li>🏅 午餐38g蛋白超目标！蛋饺🥟+杂豆🫘+山药泥三首秀</li><li>🎉 晚餐237kcal/22g连续两天双达标，全天蛋白78g（92%）接近达标</li><li>🏃 全天运动559kcal：步行+单车+力量三模式，多样性优秀</li><li>⚠️ 脂肪占比33%偏高（蛋饺是主因），偶尔可接受</li><li>⚠️ 热量1075kcal（72%目标），力量日建议加一份加餐（无糖酸奶+坚果）</li><li>🏅 评价：体重新低S | 深睡S | 午餐蛋白A | 晚餐A | 力量回归A | 蛋白A− | 热量C+</li></ul>',
     evalType: 'good',
   },
 ];
