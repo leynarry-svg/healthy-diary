@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>leynarry · 健康日记</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
     --bg: #f6f4f0;
@@ -1888,130 +1887,174 @@ document.getElementById('dailyCards').innerHTML = weekIndices.map((wn, i) =>
   renderWeekGroup(weekGroups[wn], parseInt(wn), parseInt(wn) === parseInt(weekIndices[latestWeekIdx]))
 ).join('');
 
-// Charts
+// ═══════════ NATIVE CANVAS CHARTS (no external dependencies) ═══════════
+function initCanvas(canvasId, h) {
+  const canvas = document.getElementById(canvasId);
+  const W = canvas.parentElement.clientWidth;
+  canvas.width = W * 2; canvas.height = h * 2;
+  canvas.style.width = W + 'px'; canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d'); ctx.scale(2, 2);
+  return { ctx, W, H: h, canvas };
+}
+
+const _chartDrawn = {};
+
 function drawWeightChart() {
-  const ctx = document.getElementById('weightChart').getContext('2d');
-  if (ctx._chart) ctx._chart.destroy();
-  const gradient = ctx.createLinearGradient(0,0,0,200);
-  gradient.addColorStop(0,'rgba(91,140,90,0.18)'); gradient.addColorStop(1,'rgba(91,140,90,0)');
-  ctx._chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: WEIGHTS.map(w=>w.date),
-      datasets: [{
-        label:'体重 Weight (kg)', data:WEIGHTS.map(w=>w.kg),
-        borderColor:'#5b8c5a', backgroundColor:gradient, fill:true,
-        tension:0.4, pointRadius:5, pointBackgroundColor:'#fff', pointBorderColor:'#5b8c5a', pointBorderWidth:2, borderWidth:2.5,
-      }],
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins: { legend:{display:false} },
-      scales:{
-        y:{ grace:'8%', ticks:{callback:v=>v+' kg',font:{size:11}}, grid:{color:'#e8e4dd'} },
-        x:{ grid:{display:false}, ticks:{font:{size:11}} },
-      },
-    },
+  if (_chartDrawn.weight) return;
+  const { ctx, W, H } = initCanvas('weightChart', 200);
+  const data = WEIGHTS;
+  const pad = { t: 20, r: 16, b: 34, l: 46 };
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  const minV = Math.floor(Math.min(...data.map(d => d.kg))) - 1;
+  const maxV = Math.ceil(Math.max(...data.map(d => d.kg))) + 1;
+  const x = i => pad.l + (i / (data.length - 1)) * pw;
+  const y = v => pad.t + ph - ((v - minV) / (maxV - minV)) * ph;
+
+  // Grid
+  ctx.strokeStyle = '#e8e4dd'; ctx.lineWidth = 0.5;
+  for (let v = minV; v <= maxV; v += 2) {
+    const yy = y(v);
+    ctx.beginPath(); ctx.moveTo(pad.l, yy); ctx.lineTo(W - pad.r, yy); ctx.stroke();
+    ctx.fillStyle = '#8c7b6d'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(v + ' kg', pad.l - 5, yy + 4);
+  }
+  // X labels
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor((data.length - 1) / 10));
+  data.forEach((d, i) => {
+    if (i % step === 0 || i === data.length - 1) {
+      ctx.fillStyle = '#8c7b6d'; ctx.font = '9px sans-serif';
+      ctx.fillText(d.date, x(i), H - pad.b + 15);
+    }
   });
+  // Area fill
+  ctx.fillStyle = 'rgba(91,140,90,0.12)';
+  ctx.beginPath(); ctx.moveTo(x(0), y(maxV));
+  data.forEach((d, i) => ctx.lineTo(x(i), y(d.kg)));
+  ctx.lineTo(x(data.length - 1), y(maxV)); ctx.closePath(); ctx.fill();
+  // Line
+  ctx.strokeStyle = '#5b8c5a'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  ctx.beginPath(); data.forEach((d, i) => i === 0 ? ctx.moveTo(x(i), y(d.kg)) : ctx.lineTo(x(i), y(d.kg))); ctx.stroke();
+  // Points
+  data.forEach((d, i) => {
+    const xx = x(i), yy = y(d.kg);
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(xx, yy, 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#5b8c5a'; ctx.lineWidth = 2; ctx.stroke();
+  });
+  _chartDrawn.weight = true;
 }
 
 function drawBmiChart() {
-  const ctx = document.getElementById('bmiChart').getContext('2d');
-  if (ctx._chart) ctx._chart.destroy();
-  const bmis = WEIGHTS.map(w => parseFloat((w.kg / Math.pow(PROFILE.heightCm/100,2)).toFixed(1)));
-  ctx._chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: WEIGHTS.map(w=>w.date),
-      datasets: [{
-        label:'BMI', data:bmis,
-        borderColor:'#8b6b9e', backgroundColor:'rgba(139,107,158,0.08)', fill:true,
-        tension:0.4, pointRadius:4, borderWidth:2.5,
-      }],
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
-      scales:{
-        y:{ grace:'10%', ticks:{font:{size:11}}, grid:{color:'#e8e4dd'} },
-        x:{ grid:{display:false}, ticks:{font:{size:11}} },
-      },
-    },
+  if (_chartDrawn.bmi) return;
+  const { ctx, W, H } = initCanvas('bmiChart', 140);
+  const data = WEIGHTS.map(w => ({ date: w.date, bmi: parseFloat((w.kg / Math.pow(PROFILE.heightCm / 100, 2)).toFixed(1)) }));
+  const pad = { t: 14, r: 16, b: 30, l: 36 };
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  const minV = Math.floor(Math.min(...data.map(d => d.bmi))) - 0.5;
+  const maxV = Math.ceil(Math.max(...data.map(d => d.bmi))) + 0.5;
+  const x = i => pad.l + (i / (data.length - 1)) * pw;
+  const y = v => pad.t + ph - ((v - minV) / (maxV - minV)) * ph;
+
+  ctx.strokeStyle = '#e8e4dd'; ctx.lineWidth = 0.5;
+  for (let v = Math.ceil(minV); v <= maxV; v += 1) {
+    const yy = y(v);
+    ctx.beginPath(); ctx.moveTo(pad.l, yy); ctx.lineTo(W - pad.r, yy); ctx.stroke();
+    ctx.fillStyle = '#8c7b6d'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(1), pad.l - 5, yy + 4);
+  }
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor((data.length - 1) / 10));
+  data.forEach((d, i) => {
+    if (i % step === 0 || i === data.length - 1) {
+      ctx.fillStyle = '#8c7b6d'; ctx.font = '9px sans-serif';
+      ctx.fillText(d.date, x(i), H - pad.b + 14);
+    }
   });
+  ctx.strokeStyle = '#8b6b9e'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  ctx.beginPath(); data.forEach((d, i) => i === 0 ? ctx.moveTo(x(i), y(d.bmi)) : ctx.lineTo(x(i), y(d.bmi))); ctx.stroke();
+  data.forEach((d, i) => {
+    const xx = x(i), yy = y(d.bmi);
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(xx, yy, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#8b6b9e'; ctx.lineWidth = 1.8; ctx.stroke();
+  });
+  _chartDrawn.bmi = true;
 }
 
 function drawKcalChart() {
-  const ctx = document.getElementById('kcalChart').getContext('2d');
-  if (ctx._chart) ctx._chart.destroy();
-  const dates = DAYS.map(d=>d.date.slice(5));
-  const kcals = DAYS.map(d=>{
-    return [d.meals.breakfast,d.meals.lunch,d.meals.afternoon,d.meals.dinner].filter(Boolean).reduce((s,m)=>s+(m.kcal||0),0);
+  if (_chartDrawn.kcal) return;
+  const { ctx, W, H } = initCanvas('kcalChart', 180);
+  const dates = DAYS.map(d => d.date.slice(5));
+  const kcals = DAYS.map(d => [d.meals.breakfast, d.meals.lunch, d.meals.afternoon, d.meals.dinner].filter(Boolean).reduce((s, m) => s + (m.kcal || 0), 0));
+  const pad = { t: 14, r: 16, b: 38, l: 46 };
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  const maxV = Math.max(PROFILE.tdee, Math.max(...kcals)) + 200;
+  const x = i => pad.l + (i / (kcals.length - 1)) * pw;
+  const y = v => pad.t + ph - (v / maxV) * ph;
+  const barW = Math.max(4, pw / kcals.length * 0.7);
+  const gap = (pw / kcals.length - barW) / 2;
+
+  // Grid
+  ctx.strokeStyle = '#e8e4dd'; ctx.lineWidth = 0.5;
+  for (let v = 0; v <= maxV; v += 500) {
+    const yy = y(v);
+    ctx.beginPath(); ctx.moveTo(pad.l, yy); ctx.lineTo(W - pad.r, yy); ctx.stroke();
+    ctx.fillStyle = '#8c7b6d'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(v + ' kcal', pad.l - 5, yy + 4);
+  }
+  // X labels
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor((kcals.length - 1) / 10));
+  kcals.forEach((_, i) => {
+    if (i % step === 0 || i === kcals.length - 1) {
+      ctx.fillStyle = '#8c7b6d'; ctx.font = '9px sans-serif';
+      ctx.fillText(dates[i], x(i), H - pad.b + 14);
+    }
   });
-  ctx._chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: dates,
-      datasets: [{
-        label:'摄入 Intake (kcal)', data:kcals,
-        backgroundColor: kcals.map(k => k>1800?'rgba(192,80,77,0.6)':k>0?'rgba(91,140,90,0.6)':'rgba(200,200,200,0.3)'),
-        borderColor: kcals.map(k => k>1800?'#c0504d':'#5b8c5a'),
-        borderWidth: 1.5, borderRadius: 6,
-      }],
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false} },
-      scales:{
-        y:{ grace:'20%', ticks:{callback:v=>v+' kcal',font:{size:11}}, grid:{color:'#e8e4dd'} },
-        x:{ grid:{display:false}, ticks:{font:{size:11}} },
-      },
-    },
-    plugins: [{
-      id: 'kcalTarget',
-      afterDraw(chart) {
-        const ctx = chart.ctx;
-        const xLeft = chart.scales.x.left;
-        const xRight = chart.scales.x.right;
-
-        // RMR line (1600)
-        const yRMR = chart.scales.y.getPixelForValue(PROFILE.rmr);
-        ctx.save();
-        ctx.beginPath(); ctx.setLineDash([3,6]);
-        ctx.strokeStyle = 'rgba(139,107,158,0.5)'; ctx.lineWidth = 1;
-        ctx.moveTo(xLeft, yRMR); ctx.lineTo(xRight, yRMR); ctx.stroke();
-        ctx.fillStyle = '#8b6b9e';
-        ctx.font = '9.5px sans-serif';
-        ctx.fillText('RMR/静息代谢 '+PROFILE.rmr, xRight-48, yRMR-4);
-        ctx.restore();
-
-        // TDEE line (2160)
-        const yTDEE = chart.scales.y.getPixelForValue(PROFILE.tdee);
-        ctx.save();
-        ctx.beginPath(); ctx.setLineDash([4,4]);
-        ctx.strokeStyle = 'rgba(192,80,77,0.4)'; ctx.lineWidth = 1;
-        ctx.moveTo(xLeft, yTDEE); ctx.lineTo(xRight, yTDEE); ctx.stroke();
-        ctx.fillStyle = '#c0504d';
-        ctx.font = '9.5px sans-serif';
-        ctx.fillText('TDEE/总消耗 '+PROFILE.tdee, xRight-60, yTDEE-4);
-        ctx.restore();
-
-        // Target zone (1500-1600) — shaded band
-        const yHi = chart.scales.y.getPixelForValue(PROFILE.kcalTargetHigh);
-        const yLo = chart.scales.y.getPixelForValue(PROFILE.kcalTargetLow);
-        ctx.save();
-        ctx.fillStyle = 'rgba(91,140,90,0.08)';
-        ctx.fillRect(xLeft, yHi, xRight - xLeft, yLo - yHi);
-        ctx.strokeStyle = 'rgba(91,140,90,0.5)';
-        ctx.lineWidth = 1.2; ctx.setLineDash([]);
-        ctx.beginPath(); ctx.moveTo(xLeft, yHi); ctx.lineTo(xRight, yHi); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(xLeft, yLo); ctx.lineTo(xRight, yLo); ctx.stroke();
-        ctx.fillStyle = '#5b8c5a';
-        ctx.font = 'bold 9.5px sans-serif';
-        ctx.fillText('推荐摄入/Goal 1500–1600', xRight-120, (yHi+yLo)/2+3);
-        ctx.restore();
-      }
-    }],
+  // Target zone (1500-1600)
+  const yHi = y(PROFILE.kcalTargetHigh), yLo = y(PROFILE.kcalTargetLow);
+  ctx.fillStyle = 'rgba(91,140,90,0.07)';
+  ctx.fillRect(pad.l, yHi, pw, yLo - yHi);
+  ctx.strokeStyle = 'rgba(91,140,90,0.4)'; ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(pad.l, yHi); ctx.lineTo(W - pad.r, yHi); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, yLo); ctx.lineTo(W - pad.r, yLo); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#5b8c5a'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'right';
+  ctx.fillText('目标 1500-1600', W - pad.r, (yHi + yLo) / 2 + 4);
+  // RMR line
+  const yRMR = y(PROFILE.rmr);
+  ctx.strokeStyle = 'rgba(139,107,158,0.45)'; ctx.lineWidth = 1;
+  ctx.setLineDash([3, 5]);
+  ctx.beginPath(); ctx.moveTo(pad.l, yRMR); ctx.lineTo(W - pad.r, yRMR); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#8b6b9e'; ctx.font = '9px sans-serif';
+  ctx.fillText('RMR ' + PROFILE.rmr, W - pad.r - 2, yRMR - 3);
+  // TDEE line
+  const yTDEE = y(PROFILE.tdee);
+  ctx.strokeStyle = 'rgba(192,80,77,0.35)'; ctx.lineWidth = 1;
+  ctx.setLineDash([3, 5]);
+  ctx.beginPath(); ctx.moveTo(pad.l, yTDEE); ctx.lineTo(W - pad.r, yTDEE); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#c0504d'; ctx.font = '9px sans-serif';
+  ctx.fillText('TDEE ' + PROFILE.tdee, W - pad.r - 2, yTDEE - 3);
+  // Bars
+  kcals.forEach((v, i) => {
+    const bx = x(i) - barW / 2, bh = v / maxV * ph;
+    ctx.fillStyle = v > 1800 ? 'rgba(192,80,77,0.55)' : v > 0 ? 'rgba(91,140,90,0.55)' : 'rgba(200,200,200,0.25)';
+    ctx.strokeStyle = v > 1800 ? '#c0504d' : '#5b8c5a';
+    ctx.lineWidth = 1;
+    const by = pad.t + ph - bh;
+    ctx.beginPath(); ctx.roundRect(bx, by, barW, bh, [4, 4, 0, 0]); ctx.fill(); ctx.stroke();
   });
+  _chartDrawn.kcal = true;
+}
+
+function resetCharts() {
+  _chartDrawn.weight = _chartDrawn.bmi = _chartDrawn.kcal = false;
+  ['weightChart', 'bmiChart', 'kcalChart'].forEach(id => {
+    const c = document.getElementById(id); if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height); }
+  });
+  window._chartsDrawn = false;
 }
 
 // Draw charts on trends tab
@@ -2063,12 +2106,7 @@ function applyLockState() {
       document.getElementById('panel-daily').classList.add('active');
     }
     // Clear chart canvases
-    ['weightChart','bmiChart','kcalChart'].forEach(id => {
-      const c = document.getElementById(id);
-      if (c && c._chart) c._chart.destroy();
-      if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
-    });
-    window._chartsDrawn = false;
+    resetCharts();
     // Show lock overlay on metrics & trends panels
     if (lockOverlay) lockOverlay.style.display = 'flex';
   }
