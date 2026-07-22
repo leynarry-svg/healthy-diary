@@ -572,6 +572,9 @@ const WEIGHTS = [
   { date: '7.17', kg: 68.05, source: '🏠' },
   { date: '7.18', kg: 68.1, source: '🏠' },
   { date: '7.19', kg: 68.55, source: '🏠⚠️' },
+  { date: '7.20', kg: 68.3, source: '🏠' },
+  { date: '7.21', kg: 68.45, source: '🏠' },
+  { date: '7.22', kg: 68.05, source: '🏠' },
 ];
 
 const DAYS = [
@@ -1544,7 +1547,7 @@ const DAYS = [
   },
   {
     date: '2026-07-17',
-    weekday: '周四 Thu',
+    weekday: '周五 Fri',
     weightKg: 68.05,
     meals: {
       breakfast: {
@@ -1574,7 +1577,7 @@ const DAYS = [
   },
   {
     date: '2026-07-18',
-    weekday: '周五 Fri',
+    weekday: '周六 Sat',
     weightKg: 68.1,
     meals: {
       breakfast: {
@@ -1604,7 +1607,7 @@ const DAYS = [
   },
   {
     date: '2026-07-19',
-    weekday: '周六 Sat',
+    weekday: '周日 Sun',
     weightKg: 68.55,
     meals: {
       breakfast: {
@@ -1630,6 +1633,96 @@ const DAYS = [
     supplements: 'D2 休息日 ⏸️（隔天一次，7/18服）· 💊易善复 随餐',
     symptoms: null,
     eval: '<ul><li>📈 137.1斤（68.55kg）⚠️穿衣+饭后测，非空腹不具可比性，明晨空腹再测</li><li>🔥🔥 运动799kcal单日爆发！（仅次于7/11的988kcal），四模式并行，多样性S级</li><li>💪 力量训练（练腿）🏅回归——增肌提升基础代谢+胰岛素敏感性，PMOS最关键运动</li><li>🏅 早午蛋白双爆破：早餐32g+午餐33g=65g，已近全天目标（85g的76%）</li><li>🐟🥑 银鳕鱼+牛油果组合精准补充HDL-C（Omega-3+单不饱和脂肪），针对唯一警报HDL-C 0.71</li><li>🔴 晚餐蛋白5g是本日致命短板——全麦馒头+茄子+黄瓜无蛋白源，运动日后身体最需蛋白修复</li><li>🔴🔴 睡眠4h59min建档最低！与昨日8h59min创纪录后断崖式下跌，周末作息漂移严重</li><li>🔴 净摄入仅171kcal极度赤字（运动799-摄入970），明天务必多吃补充</li><li>⚠️ 全天970kcal（65%目标），蛋白70g（82%），饮水1.2L不足</li><li>💧 运动爆发日+高蛋白需至少2L水，今日仅1.2L严重不足</li><li>🏅 评价：运动S🔥 | 早午蛋白S | 食材品质A | 晚餐D | 睡眠D | 热量C+</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-20',
+    weekday: '周一 Mon',
+    weightKg: 68.3,
+    meals: {
+      breakfast: {
+        items: '50g黄瓜拌西红柿 + 2片蒸土豆片 + 水煮蛋1个 + 1/4玉米 + 2片地瓜片 + 4片胡萝卜',
+        kcal: 270, protein: 14, carb: 38, fat: 7,
+        rating: 'warn', note: '⚠️蛋白仅14g偏低（目标25-30g），缺高密度蛋白源。蒸/煮为主，地瓜+玉米+土豆低GI三重奏 / Only 14g protein, need beef/milk',
+      },
+      lunch: {
+        items: '30g豆豉龙利鱼 + 一小块南瓜 + 10g杂粮饭 + 30g清炒油菜 + 15g拌紫甘蓝 + 15g拌海鲜菇 + 10g凉皮 + 10g拌西蓝花 + 10g鸡腿肉 + 10g瘦骨棒肉',
+        kcal: 385, protein: 28, carb: 40, fat: 11,
+        rating: 'good', note: '🏅食材10种！龙利鱼+鸡腿+瘦骨棒肉三重蛋白，凉皮🍜首秀。多色蔬菜 / 10 ingredients, 凉皮 debut',
+      },
+      dinner: {
+        items: '50g土豆泥 + 1/2玉米 + 5个蓝莓 + 水煮蛋清1个 + 2小片地瓜 + 2片胡萝卜 + 3个虾仁 + 60g炒青笋 + 1片酱牛肉',
+        kcal: 275, protein: 20, carb: 40, fat: 4,
+        rating: 'great', note: '🏅热量275+蛋白20g双达标！虾仁+蛋清+酱牛肉三重低脂蛋白 / Both targets hit! Shrimp + egg white + beef',
+      },
+    },
+    exercise: '🚶户外步行 4.41km（70min / 278kcal）',
+    exerciseKcal: 278,
+    sleep: '00:30~7:38（7h8min，深睡70min）',
+    water: '1.5L ✅ 达标',
+    supplements: 'D2 服用 ✅（隔天一次，7/19停）· 💊易善复 随餐',
+    symptoms: null,
+    eval: '<ul><li>📉 136.6斤（68.3kg），BMI 24.8，距正常24还需1.89kg</li><li>✅ 晚餐275kcal/20g双达标🏅，凉皮🍜首秀</li><li>✅ 午餐食材10种多样性优秀</li><li>🏅 晚餐蛋白源覆盖海+蛋+畜，搭配均衡</li><li>⚠️ 全天~930kcal（62%目标），蛋白62g（73%）</li><li>⚠️ 早餐蛋白14g是主要缺口</li><li>⚠️ 入睡00:30过零点，睡眠7h8min略低于7.5h目标</li><li>🏅 评价：晚餐A | 午餐多样性A | 步行A− | 蛋白C+ | 热量C</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-21',
+    weekday: '周二 Tue',
+    weightKg: 68.45,
+    meals: {
+      breakfast: {
+        items: '水煮蛋1个 + 4片胡萝卜 + 2块山药 + 40g秋葵 + 1/4玉米 + 250ml奇亚籽脱脂牛奶',
+        kcal: 320, protein: 22, carb: 38, fat: 7,
+        rating: 'good', note: '✅秋葵🌿持续登场！蛋+牛奶双蛋白，山药+玉米低GI。蛋白22g接近目标 / Okra + milk + egg, 22g protein',
+      },
+      lunch: {
+        items: '4块排骨 + 30g冬瓜胡萝卜丝 + 40g秋葵 + 3个圣女果 + 8个蓝莓 + 80g杂粮饭 + 2个煎基围虾',
+        kcal: 470, protein: 28, carb: 42, fat: 18,
+        rating: 'good', note: '排骨🐖回归+基围虾🦐双动物蛋白！秋葵贯穿早午两餐。80g杂粮饭分量足 / Ribs + shrimp, okra x2 meals',
+      },
+      dinner: {
+        items: '40g水煮鸡胸肉丝 + 1片酱牛肉 + 35g黄瓜丝胡萝卜丝 + 3个圣女果 + 6个蓝莓 + 3片胡萝卜 + 水煮蛋清1个 + 1/4玉米',
+        kcal: 235, protein: 24, carb: 28, fat: 4,
+        rating: 'great', note: '🏅🏅热量235+蛋白24g双达标！鸡胸+牛肉+蛋清三重低脂蛋白，密度41%极高 / Triple protein, 41% protein density',
+      },
+    },
+    exercise: '💪功能性力量训练·练背1h10min（298kcal）+ 🚲户外单车2.33km（64kcal）+ 🚶户外步行5.9km/78min（334kcal）',
+    exerciseKcal: 696,
+    sleep: '1:05~7:49（6h44min，深睡49min）',
+    water: '1.8L ✅ 达标🏅（超额20%）',
+    supplements: 'D2 休息 ⏸️（隔天一次，7/20服）· 💊易善复 随餐',
+    symptoms: null,
+    eval: '<ul><li>📈 136.9斤（68.45kg），+0.3斤正常波动，BMI 24.8</li><li>🔥 运动696kcal爆发！💪力量训练（练背）🏅PMOS最关键运动类型</li><li>🎉 力量+有氧+NEAT三模式并行，运动结构S级</li><li>🏅🏅 晚餐235kcal/24g双达标，蛋白密度41%极高</li><li>✅ 秋葵贯穿早午两餐，1025kcal近四天最高</li><li>🔴 睡眠6h44min+入睡1:05，力量训练后修复不足</li><li>⚠️ 净摄入329kcal偏低——运动爆发日应同步提高摄入</li><li>⚠️ 全天1025kcal（68%目标），蛋白74g（87%）</li><li>🏅 评价：运动S | 晚餐蛋白A+ | 晚餐热量A− | 蛋白B+ | 热量B− | 睡眠C−</li></ul>',
+    evalType: 'good',
+  },
+  {
+    date: '2026-07-22',
+    weekday: '周三 Wed',
+    weightKg: 68.05,
+    meals: {
+      breakfast: {
+        items: '1/4玉米 + 2片土豆 + 水煮蛋1个 + 半个牛油果 + 5片胡萝卜 + 40g油菜炒胡萝卜丝',
+        kcal: 305, protein: 14, carb: 30, fat: 12,
+        rating: 'warn', note: '⚠️蛋白仅14g偏低。牛油果🥑单不饱和脂肪→精准补充HDL-C！加油菜深绿蔬菜 / Avocado for HDL-C! Low protein',
+      },
+      lunch: {
+        items: '70g河鲈鱼 + 6片蒜蓉生菜 + 3个圣女果 + 6个蓝莓 + 20g紫甘蓝丝 + 40g鸡胸肉丝 + 10g黄瓜丝 + 60g荞麦面',
+        kcal: 395, protein: 35, carb: 40, fat: 6,
+        rating: 'great', note: '🏅蛋白35g超标！河鲈鱼（~16g）+鸡胸肉丝（~12g）双核。荞麦面60g低GI / Fish + chicken duo, 35g protein!',
+      },
+      dinner: {
+        items: '1/4玉米 + 2片土豆片 + 水煮蛋清1个 + 3个圣女果 + 6个蓝莓 + 6个开心果 + 2片酱牛肉 + 20g紫甘蓝丝 + 15g胡萝卜丝 + 3片生菜',
+        kcal: 225, protein: 18, carb: 28, fat: 7,
+        rating: 'great', note: '🏅热量225+蛋白18g双达标！酱牛肉+蛋清双蛋白，开心果健康脂肪。食材10种 / Both targets hit! 10 ingredients',
+      },
+    },
+    exercise: '🚶户外步行 两段40min（124kcal + 181kcal = 305kcal）',
+    exerciseKcal: 305,
+    sleep: '3:09~7:55（4h46min，深睡57min）',
+    water: '1.5L ✅ 达标',
+    supplements: 'D2 服用 ✅（隔天一次，7/21停）· 💊易善复 随餐',
+    symptoms: null,
+    eval: '<ul><li>🎉 136.1斤（68.05kg）追平7/15和7/17低点！距135仅差1.1斤，BMI 24.7</li><li>🏅 午餐35g蛋白超标！河鲈鱼+鸡胸肉丝双核</li><li>🏅 晚餐225kcal/18g双达标</li><li>🥑 牛油果+下午无糖酸奶，HDL-C精准补充</li><li>✅ 下午加餐135ml无糖酸奶+5g蛋白，全天990kcal逼近千卡</li><li>🔴🔴 睡眠4h46min本周最大警报！入睡3:09极度偏晚</li><li>🔴 入睡连续恶化：1:10→00:30→1:05→3:09，今晚务必23:30前入睡</li><li>⚠️ 990kcal（66%目标），蛋白72g（85%）</li><li>🏅 评价：午餐蛋白A | 晚餐A− | 步行B+ | 蛋白B | 热量C+ | 睡眠D</li></ul>',
     evalType: 'good',
   },
 ];
