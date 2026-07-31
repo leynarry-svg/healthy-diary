@@ -83,7 +83,7 @@
   .empty { font-size:.78rem; color:var(--muted); padding:6px 2px; }
 
   .grp { margin-bottom:10px; }
-  .grp .gt { font-size:.72rem; color:var(--muted); font-weight:600; margin-bottom:5px; }
+  .gt { font-size:.72rem; color:var(--muted); font-weight:600; margin-bottom:5px; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; }
   .chip {
     border:1px solid var(--border); background:#fff; border-radius:999px;
@@ -144,8 +144,9 @@
 
 <div class="card">
   <h2>🏃 运动</h2>
-  <div class="chips" id="exChips" style="margin-bottom:10px;"></div>
-  <div class="row">
+  <div class="chips" id="exChips"></div>
+  <div id="exParts"></div>
+  <div class="row" style="margin-top:10px;">
     <div class="fld"><label>距离 km</label><input type="number" inputmode="decimal" step="0.01" id="exKm" placeholder="2.44"></div>
     <div class="fld"><label>时长 min</label><input type="number" inputmode="numeric" id="exMin" placeholder="30"></div>
     <div class="fld"><label>消耗 kcal</label><input type="number" inputmode="numeric" id="exKcal" placeholder="148"></div>
@@ -214,9 +215,11 @@ var FOODS = [
     {n:'山药',   u:'g', d:100},
     {n:'全麦馒头', u:'个', d:1}
   ]},
-  { g:'蔬菜 / 水果（按份，别数片数）', items:[
-    {n:'蔬菜', u:'份', d:1},
-    {n:'水果', u:'份', d:1}
+  { g:'蔬菜 / 水果（默认按份；要精确时用克数）', items:[
+    {n:'蔬菜', u:'份', d:1,   label:'蔬菜 份'},
+    {n:'蔬菜', u:'g',  d:100, label:'蔬菜 克数'},
+    {n:'水果', u:'份', d:1,   label:'水果 份'},
+    {n:'水果', u:'g',  d:100, label:'水果 克数'}
   ]},
   { g:'⭐ 脂肪源（HDL 关键，每天至少 1 项）', fat:true, items:[
     {n:'橄榄油',   u:'勺', d:1,   fat:true},
@@ -241,6 +244,7 @@ var MEALS = [
 ];
 
 var EX_TYPES = ['无', '户外步行', '室内爬坡', '力量训练', '骑行', '其他'];
+var EX_PARTS = ['腿', '臀', '背', '胸', '肩', '手臂', '核心', '全身'];
 
 var LS_PREFIX = 'leynarry-log-';
 var cur = 'breakfast';
@@ -251,7 +255,7 @@ function blank(d) {
   return {
     date: d, weight:'', water:'',
     sleepStart:'', sleepEnd:'', deep:'',
-    exType:'', exKm:'', exMin:'', exKcal:'',
+    exType:'', exParts:[], exKm:'', exMin:'', exKcal:'',
     meals: { breakfast:[], lunch:[], afternoon:[], dinner:[] },
     variety: { breakfast:'', lunch:'', afternoon:'', dinner:'' },
     feel: ''
@@ -327,9 +331,9 @@ function renderPalette() {
     h += '<div class="grp"><div class="gt">' + esc(grp.g) + '</div><div class="chips">';
     for (var j=0;j<grp.items.length;j++) {
       var f = grp.items[j];
-      var on = has(f.n) ? ' on' : '';
+      var on = has(f.n, f.u) ? ' on' : '';
       h += '<button class="chip' + (f.fat?' fat':'') + on + '" onclick="addFood(' + i + ',' + j + ')">' +
-           esc(f.n) + '</button>';
+           esc(f.label || f.n) + '</button>';
     }
     h += '</div></div>';
   }
@@ -342,6 +346,21 @@ function renderEx() {
          '" onclick="setEx(\'' + EX_TYPES[i] + '\')">' + EX_TYPES[i] + '</button>';
   }
   document.getElementById('exChips').innerHTML = h;
+
+  var pe = document.getElementById('exParts');
+  if (S.exType !== '力量训练') { pe.innerHTML = ''; return; }
+  var p = '<div class="gt" style="margin:10px 0 5px;">今天练的部位（可多选）</div><div class="chips">';
+  for (var i=0;i<EX_PARTS.length;i++) {
+    var on = S.exParts.indexOf(EX_PARTS[i]) >= 0 ? ' on' : '';
+    p += '<button class="chip' + on + '" onclick="togglePart(\'' + EX_PARTS[i] + '\')">' + EX_PARTS[i] + '</button>';
+  }
+  p += '</div>';
+  pe.innerHTML = p;
+}
+function togglePart(t) {
+  var i = S.exParts.indexOf(t);
+  if (i >= 0) S.exParts.splice(i, 1); else S.exParts.push(t);
+  save(); renderEx();
 }
 function renderFatBanner() {
   var n = 0;
@@ -375,16 +394,16 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function mins(t) { var p = t.split(':'); return (+p[0])*60 + (+p[1]); }
-function has(n) {
+function has(n, u) {
   var l = S.meals[cur];
-  for (var i=0;i<l.length;i++) if (l[i].n === n) return true;
+  for (var i=0;i<l.length;i++) if (l[i].n === n && l[i].u === u) return true;
   return false;
 }
 function switchMeal(k) { cur = k; renderTabs(); renderItems(); renderPalette(); }
 function addFood(gi, fi) {
   var f = FOODS[gi].items[fi], l = S.meals[cur];
   for (var i=0;i<l.length;i++) {
-    if (l[i].n === f.n) { l[i].q = round2(l[i].q + f.d); after(); return; }
+    if (l[i].n === f.n && l[i].u === f.u) { l[i].q = round2(l[i].q + f.d); after(); return; }
   }
   l.push({ n:f.n, q:f.d, u:f.u, fat: !!f.fat });
   after();
@@ -486,7 +505,8 @@ function build() {
     if (S.exKm)   p.push(S.exKm + 'km');
     if (S.exMin)  p.push(S.exMin + 'min');
     if (S.exKcal) p.push(S.exKcal + 'kcal');
-    L.push('动 ' + S.exType + (p.length ? ' ' + p.join('/') : ''));
+    var parts = (S.exType === '力量训练' && S.exParts.length) ? '（' + S.exParts.join('+') + '）' : '';
+    L.push('动 ' + S.exType + parts + (p.length ? ' ' + p.join('/') : ''));
   }
 
   for (var i=0;i<MEALS.length;i++) {
