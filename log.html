@@ -93,6 +93,22 @@
   .mbtn.set { border-style:solid; background:#fff; color:var(--text); font-weight:600; }
   .mbtn.oil { border-color:#e2c9a3; background:#fdf8ef; color:#8a6428; }
   .mpick { margin-top:6px; padding:8px; background:#fff; border:1px solid var(--border); border-radius:10px; }
+  .item.dish { background:#f4f8f3; border-color:#cfe0cd; }
+  .subs { margin:5px 0 0 4px; padding-left:9px; border-left:2px solid #cfe0cd; }
+  .sub { display:flex; align-items:center; gap:5px; padding:2px 0; }
+  .sub .sn { flex:1; font-size:.79rem; color:#4a5b48; min-width:0; }
+  .sub .qty { width:50px; height:32px; min-height:32px; font-size:14px; }
+  .sub .stp { width:32px; height:32px; }
+  .sub .del { width:30px; height:32px; font-size:.95rem; }
+  .dishbar { display:flex; align-items:center; gap:8px; background:#e9f2e8; border:1px solid #cfe0cd;
+             border-radius:10px; padding:8px 10px; margin-bottom:8px; font-size:.78rem; color:#3d6b3c; }
+  .dishbar b { font-weight:700; }
+  .cks { display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; }
+  .cks label { display:flex; align-items:center; gap:7px; font-size:.76rem; color:var(--muted); padding:6px 0; cursor:pointer; }
+  .cks input { width:22px; height:22px; min-height:22px; flex:none; }
+  .dishbar button { margin-left:auto; border:none; background:var(--accent); color:#fff;
+                    border-radius:8px; padding:6px 12px; font-size:.76rem; font-weight:700;
+                    font-family:inherit; cursor:pointer; min-height:32px; flex:none; }
 
   .seg { border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:8px; background:#fbfaf8; }
   .seg .st { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
@@ -129,8 +145,10 @@
   <div class="sb">
     <div class="mealtabs" id="mealtabs"></div>
     <div class="items" id="items"></div>
+    <div id="dishBar"></div>
     <div class="gtabs" id="gtabs"></div>
     <div class="chips" id="palette"></div>
+    <div class="mrow"><button class="mbtn" onclick="newDish()">🍲 ＋ 一道菜（多种食材）</button></div>
     <div class="gt">蔬果品种（选填，只记名字）</div>
     <input type="text" id="variety" placeholder="秋葵 生菜 蓝莓">
     <div class="gt">自己加一样（会进「我的常用」）</div>
@@ -143,6 +161,10 @@
         <option value="根">根</option><option value="勺">勺</option><option value="杯">杯</option>
         <option value="份">份</option><option value="">无</option></select></div>
       <button class="stp" style="width:42px;" onclick="addCustom()">＋</button>
+    </div>
+    <div class="cks">
+      <label><input type="checkbox" id="cFav"> ⭐ 加入常用</label>
+      <label><input type="checkbox" id="cFat"> 🛢️ 含油脂</label>
     </div>
     <div id="fatBanner"></div>
   </div>
@@ -244,6 +266,9 @@ var METHODS = [
 
 var EX_TYPES = ['户外步行','室内爬坡','跑步机','力量训练','私教课','椭圆仪',
                 '羽毛球','跳舞','游泳','骑行','超慢跑','家务','通勤步行','休息日'];
+// 只有这些才需要选身体部位
+var EX_STRENGTH = ['力量训练','私教课'];
+function needsParts(t){ return EX_STRENGTH.indexOf(t) >= 0 || getLib(LS_SP).indexOf(t) >= 0; }
 var EX_PARTS = ['腿','臀','背','胸','肩','肱二头肌','肱三头肌','核心','全身'];
 var SUPPS = ['易善复','维生素D','Omega-3','复合维生素'];
 var PERIODS = ['无','量少','量中','量多'];
@@ -251,9 +276,10 @@ var MEALS = [{k:'breakfast',o:'早',l:'早'},{k:'lunch',o:'午',l:'午'},
              {k:'afternoon',o:'加',l:'加餐'},{k:'dinner',o:'晚',l:'晚'}];
 
 var LS='leynarry-log-', LS_F='leynarry-custom-foods', LS_E='leynarry-custom-ex',
-    LS_S='leynarry-custom-supp', LS_P='leynarry-custom-part', LS_M='leynarry-custom-method';
+    LS_S='leynarry-custom-supp', LS_P='leynarry-custom-part', LS_M='leynarry-custom-method',
+    LS_SP='leynarry-strength-types';
 
-var S=null, cur='breakfast', gsel=0, mpick=-1, open1='food';
+var S=null, cur='breakfast', gsel=0, mpick=-1, open1='food', dish=-1;
 
 // ═══════════ 工具 ═══════════
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -358,15 +384,32 @@ function renderItems(){
   for(var i=0;i<l.length;i++){
     var it=l[i], mm=it.m?methodOf(it.m):null;
     var cls='mbtn'+(it.m?' set':'')+(mm&&mm.oil>0?' oil':'');
-    h+='<div class="item"><div class="itop">'+
-      '<span class="nm">'+esc(it.n)+(it.fat?'<span class="fm">⭐</span>':'')+'</span>'+
-      (it.free?'':'<button class="stp" onclick="bump('+i+',-1)">−</button>')+
-      '<input class="qty" type="text" inputmode="decimal" value="'+esc(it.q)+'" onchange="setQty('+i+',this.value)">'+
-      '<span class="un">'+esc(it.u)+'</span>'+
-      (it.free?'':'<button class="stp" onclick="bump('+i+',1)">＋</button>')+
-      '<button class="del" onclick="del('+i+')">✕</button></div>'+
-      '<div class="mrow"><button class="'+cls+'" onclick="pickM('+i+')">'+
-      (it.m? esc(it.m)+(mm&&mm.oil==2?' 🛢️🛢️':(mm&&mm.oil==1?' 🛢️':'')) : '＋ 做法')+'</button></div>';
+    var isDish=!!it.sub;
+    h+='<div class="item'+(isDish?' dish':'')+'"><div class="itop">'+
+      '<span class="nm">'+(isDish?'🍲 ':'')+esc(it.n)+(it.fat?'<span class="fm">⭐</span>':'')+'</span>'+
+      (isDish?'':
+        (it.free?'':'<button class="stp" onclick="bump('+i+',-1)">−</button>')+
+        '<input class="qty" type="text" inputmode="decimal" value="'+esc(it.q)+'" onchange="setQty('+i+',this.value)">'+
+        '<span class="un">'+esc(it.u)+'</span>'+
+        (it.free?'':'<button class="stp" onclick="bump('+i+',1)">＋</button>'))+
+      '<button class="del" onclick="del('+i+')">✕</button></div>';
+    if(isDish){
+      h+='<div class="subs">';
+      if(!it.sub.length) h+='<div class="sn" style="font-size:.74rem;color:#8c7b6d;">还没加食材 —— 点下面的按钮往这道菜里加</div>';
+      for(var s=0;s<it.sub.length;s++){
+        var sb=it.sub[s];
+        h+='<div class="sub"><span class="sn">'+esc(sb.n)+'</span>'+
+          '<button class="stp" onclick="bumpSub('+i+','+s+',-1)">−</button>'+
+          '<input class="qty" type="text" inputmode="decimal" value="'+esc(sb.q)+'" onchange="setSubQty('+i+','+s+',this.value)">'+
+          '<span class="un">'+esc(sb.u)+'</span>'+
+          '<button class="stp" onclick="bumpSub('+i+','+s+',1)">＋</button>'+
+          '<button class="del" onclick="delSub('+i+','+s+')">✕</button></div>';
+      }
+      h+='</div>';
+    }
+    h+='<div class="mrow"><button class="'+cls+'" onclick="pickM('+i+')">'+
+      (it.m? esc(it.m)+(mm&&mm.oil==2?' 🛢️🛢️':(mm&&mm.oil==1?' 🛢️':'')) : '＋ 做法')+'</button>'+
+      (isDish&&dish!==i?' <button class="mbtn" onclick="editDish('+i+')">＋ 继续加食材</button>':'')+'</div>';
     if(mpick===i){
       h+='<div class="mpick"><div class="chips">';
       var all=METHODS.concat(getLib(LS_M));
@@ -381,14 +424,48 @@ function renderItems(){
   }
   document.getElementById('items').innerHTML=h;
   document.getElementById('variety').value=S.variety[cur]||'';
+  var db=document.getElementById('dishBar');
+  db.innerHTML = (dish>=0 && S.meals[cur][dish])
+    ? '<div class="dishbar">正在往 <b>🍲 '+esc(S.meals[cur][dish].n)+'</b> 里加食材'+
+      '<button onclick="endDish()">完成</button></div>' : '';
 }
-function switchMeal(k){cur=k;mpick=-1;renderTabs();renderItems();renderPalette();}
+function switchMeal(k){cur=k;mpick=-1;dish=-1;renderTabs();renderItems();renderPalette();}
+function newDish(){
+  var n=prompt('这道菜叫什么？（例：丝瓜炒鸡蛋）'); if(!n) return; n=n.trim(); if(!n) return;
+  S.meals[cur].push({n:n,q:'',u:'',fat:false,m:'',sub:[]});
+  dish=S.meals[cur].length-1;
+  after();
+}
+function editDish(i){dish=i;renderItems();}
+function endDish(){dish=-1;renderItems();}
 function addFood(j){
-  var f=groups()[gsel].items[j],l=S.meals[cur];
-  for(var i=0;i<l.length;i++) if(l[i].n===f.n&&l[i].u===f.u){l[i].q=r2((+l[i].q)+(+f.d));return after();}
+  var f=groups()[gsel].items[j];
+  if(dish>=0 && S.meals[cur][dish] && S.meals[cur][dish].sub){
+    var sb=S.meals[cur][dish].sub;
+    for(var i=0;i<sb.length;i++) if(sb[i].n===f.n&&sb[i].u===f.u){sb[i].q=r2((+sb[i].q)+(+f.d));return after();}
+    sb.push({n:f.n,q:f.d,u:f.u});
+    if(f.fat) S.meals[cur][dish].fat=true;
+    return after();
+  }
+  var l=S.meals[cur];
+  for(var i=0;i<l.length;i++) if(!l[i].sub&&l[i].n===f.n&&l[i].u===f.u){l[i].q=r2((+l[i].q)+(+f.d));return after();}
   l.push({n:f.n,q:f.d,u:f.u,fat:!!f.fat,m:''});
   after();
 }
+function bumpSub(i,s,d){
+  var sb=S.meals[cur][i].sub[s], st=(sb.u==='g'||sb.u==='ml')?10:(sb.u==='份'?0.25:1);
+  var v=parseFloat(sb.q); if(isNaN(v)) return;
+  sb.q=r2(Math.max(0,v+d*st));
+  if(sb.q===0) S.meals[cur][i].sub.splice(s,1);
+  after();
+}
+function setSubQty(i,s,v){
+  var sb=S.meals[cur][i].sub[s]; v=String(v).trim();
+  if(v===''){S.meals[cur][i].sub.splice(s,1);return after();}
+  var x=parseFloat(v); sb.q=isNaN(x)?v:r2(x);
+  after();
+}
+function delSub(i,s){S.meals[cur][i].sub.splice(s,1);after();}
 function dropFood(j){rmLib(LS_F,j);renderGtabs();renderPalette();}
 function addCustom(){
   var n=document.getElementById('cName').value.trim(); if(!n) return document.getElementById('cName').focus();
@@ -396,9 +473,16 @@ function addCustom(){
   var q = qv===''?'适量':r2(parseFloat(qv));
   if(qv!==''&&isNaN(q)) q=qv;
   if(qv==='') u='';
-  addLib(LS_F,{n:n,u:u,d:(qv===''?'适量':q)},true);
-  S.meals[cur].push({n:n,q:q,u:u,fat:false,m:'',free:(q==='适量')});
+  var fav=document.getElementById('cFav').checked, fat=document.getElementById('cFat').checked;
+  if(fav) addLib(LS_F,{n:n,u:u,d:(qv===''?'适量':q),fat:fat},true);   // 只有勾了才收藏
+  if(dish>=0 && S.meals[cur][dish] && S.meals[cur][dish].sub){
+    S.meals[cur][dish].sub.push({n:n,q:q,u:u});
+    if(fat) S.meals[cur][dish].fat=true;
+  } else {
+    S.meals[cur].push({n:n,q:q,u:u,fat:fat,m:'',free:(q==='适量')});
+  }
   document.getElementById('cName').value=''; document.getElementById('cQty').value='';
+  document.getElementById('cFav').checked=false; document.getElementById('cFat').checked=false;
   renderGtabs(); after();
 }
 function bump(i,d){
@@ -415,7 +499,11 @@ function setQty(i,v){
   if(isNaN(x)){it.q=v;it.free=true;} else {it.q=r2(x);it.free=false;}
   after();
 }
-function del(i){S.meals[cur].splice(i,1);mpick=-1;after();}
+function del(i){
+  S.meals[cur].splice(i,1); mpick=-1;
+  if(dish===i) dish=-1; else if(dish>i) dish--;
+  after();
+}
 function pickM(i){mpick=(mpick===i?-1:i);renderItems();}
 function setM(i,m){S.meals[cur][i].m=m;mpick=-1;after();}
 function newM(i){
@@ -446,12 +534,17 @@ function renderEx(){
       h+='<div class="row">'+
         '<div class="fld"><label>km</label><input type="number" inputmode="decimal" step="0.01" value="'+esc(e.km)+'" oninput="setExF('+i+',\'km\',this.value)" placeholder="选填"></div>'+
         '<div class="fld"><label>分钟</label><input type="number" inputmode="numeric" value="'+esc(e.min)+'" oninput="setExF('+i+',\'min\',this.value)" placeholder="选填"></div>'+
-        '<div class="fld"><label>kcal</label><input type="number" inputmode="numeric" value="'+esc(e.kcal)+'" oninput="setExF('+i+',\'kcal\',this.value)" placeholder="选填"></div></div>'+
-        '<div class="gt">部位（选填）</div><div class="chips">';
-      var P=EX_PARTS.concat(getLib(LS_P));
-      for(var j=0;j<P.length;j++)
-        h+='<button class="chip'+(e.parts.indexOf(P[j])>=0?' on':'')+'" onclick="togglePart('+i+',\''+esc(P[j])+'\')">'+esc(P[j])+'</button>';
-      h+='<button class="chip add" onclick="addPart('+i+')">＋ 自己填</button></div>';
+        '<div class="fld"><label>kcal</label><input type="number" inputmode="numeric" value="'+esc(e.kcal)+'" oninput="setExF('+i+',\'kcal\',this.value)" placeholder="选填"></div></div>';
+      // 部位只在力量类运动下展示；其他运动想记也能手动打开
+      if(needsParts(e.t)||e.showParts||e.parts.length){
+        h+='<div class="gt">部位（选填）</div><div class="chips">';
+        var P=EX_PARTS.concat(getLib(LS_P));
+        for(var j=0;j<P.length;j++)
+          h+='<button class="chip'+(e.parts.indexOf(P[j])>=0?' on':'')+'" onclick="togglePart('+i+',\''+esc(P[j])+'\')">'+esc(P[j])+'</button>';
+        h+='<button class="chip add" onclick="addPart('+i+')">＋ 自己填</button></div>';
+      } else {
+        h+='<div class="mrow"><button class="mbtn" onclick="showParts('+i+')">＋ 也记部位</button></div>';
+      }
     }
     h+='</div>';
   }
@@ -463,8 +556,14 @@ function renderEx(){
   c+='<button class="chip add" onclick="newExType()">＋ 自己填</button>';
   document.getElementById('exChips').innerHTML=c;
 }
-function pushEx(t){S.ex.push({t:t,parts:[],km:'',min:'',kcal:''});save();renderEx();sums();}
-function newExType(){var t=prompt('运动名称（会记住）');if(!t)return;t=t.trim();if(!t)return;addLib(LS_E,t,false);pushEx(t);}
+function pushEx(t){S.ex.push({t:t,parts:[],km:'',min:'',kcal:'',showParts:false});save();renderEx();sums();}
+function showParts(i){S.ex[i].showParts=true;save();renderEx();}
+function newExType(){
+  var t=prompt('运动名称（会记住）'); if(!t)return; t=t.trim(); if(!t)return;
+  addLib(LS_E,t,false);
+  if(confirm('「'+t+'」是力量类训练吗？\n是 → 以后自动出现身体部位选项')) addLib(LS_SP,t,false);
+  pushEx(t);
+}
 function delEx(i){S.ex.splice(i,1);save();renderEx();sums();}
 function setExF(i,k,v){S.ex[i][k]=v;save();sums();}
 function togglePart(i,p){var a=S.ex[i].parts,j=a.indexOf(p);if(j>=0)a.splice(j,1);else a.push(p);save();renderEx();}
@@ -533,12 +632,19 @@ function wire(){
 }
 
 // ═══════════ 生成 ═══════════
+function fmtQ(o){
+  if(o.n==='玉米'&&o.u==='份'){var mp={0.25:'¼',0.5:'½',0.75:'¾',1:'1'};return '玉米'+(mp[o.q]||o.q+'份');}
+  if(o.q===''||o.q===undefined) return o.n;
+  if(isNaN(parseFloat(o.q))) return o.n+o.q;
+  return o.n+o.q+o.u;
+}
 function fmtItem(it){
-  var s;
-  if(it.n==='玉米'&&it.u==='份'){var mp={0.25:'¼',0.5:'½',0.75:'¾',1:'1'};s='玉米'+(mp[it.q]||it.q+'份');}
-  else if(isNaN(parseFloat(it.q))) s=it.n+it.q;
-  else s=it.n+it.q+it.u;
+  var s=fmtQ(it);
   if(it.m){ var m=methodOf(it.m); s+='('+it.m+(m&&m.oil==2?'·多油':(m&&m.oil==1?'·少油':''))+')'; }
+  if(it.sub){
+    var ps=[]; for(var i=0;i<it.sub.length;i++) ps.push(fmtQ(it.sub[i]));
+    s+='['+(ps.length?ps.join('+'):'未填食材')+']';
+  }
   return s;
 }
 function fmtEx(e){
