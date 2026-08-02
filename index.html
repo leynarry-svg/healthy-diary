@@ -44,6 +44,51 @@
     color: var(--muted); transition: all 0.15s; border: none; background: none;
   }
   .tab.active { background: var(--accent); color: #fff; }
+
+  /* ═══ 归档导航 ═══ */
+  .mnav { display:flex; align-items:center; gap:8px; }
+  .mtitle { flex:1; text-align:center; font-size:1rem; font-weight:700; }
+  .mbtn2 {
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--border);
+    background:#fff; color:var(--text); font-size:1.1rem; line-height:1;
+    cursor:pointer; font-family:inherit; flex:none;
+  }
+  .mbtn2:disabled { opacity:.3; cursor:default; }
+  .mstats { display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 4px; }
+  .mstats span {
+    flex:1 1 68px; background:#fbfaf8; border:1px solid var(--border); border-radius:9px;
+    padding:6px 4px; text-align:center; font-size:.68rem; color:var(--muted); line-height:1.35;
+  }
+  .mstats span b { display:block; font-size:.92rem; color:var(--text); font-weight:700; }
+
+  .cal { margin-top:10px; }
+  .calhead, .calrow { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .calhead div { text-align:center; font-size:.66rem; color:var(--muted); padding:3px 0; }
+  .calrow { margin-bottom:4px; }
+  .cell {
+    aspect-ratio:1/1; border-radius:9px; border:1px solid transparent; background:#fbfaf8;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-size:.76rem; color:#c9c2b8; font-family:inherit; padding:0; cursor:default; min-height:36px;
+  }
+  .cell.has { cursor:pointer; color:var(--text); font-weight:600; border-color:var(--border); background:#fff; }
+  .cell .kc { font-size:.56rem; font-weight:400; color:var(--muted); line-height:1.1; margin-top:1px; }
+  .cell.great { background:#eef5ec; border-color:#c9dfc5; }
+  .cell.good  { background:#f4f8f3; border-color:#d9e7d6; }
+  .cell.warn  { background:#fdf6ec; border-color:#e9d6b4; }
+  .cell.danger{ background:#fdf1f0; border-color:#e9c9c7; }
+  .cell.sel { outline:2.5px solid var(--accent); outline-offset:-2.5px; }
+  .cell.today { box-shadow:inset 0 -3px 0 var(--info); }
+
+  .vsw { display:flex; align-items:center; gap:5px; margin-top:12px; flex-wrap:wrap; }
+  .vbtn {
+    border:1px solid var(--border); background:#fff; color:var(--muted); border-radius:999px;
+    padding:7px 15px; font-size:.78rem; font-weight:600; font-family:inherit;
+    cursor:pointer; min-height:36px;
+  }
+  .vbtn.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .vhint { font-size:.68rem; color:var(--muted); margin-left:auto; }
+  .noday { text-align:center; color:var(--muted); font-size:.8rem; padding:26px 10px; }
+
   @media (max-width: 480px) {
     .tab .en { display: none; }
     .tab { font-size: 0.76rem; padding: 9px 2px; }
@@ -368,6 +413,23 @@
       <li>💡 <b>下周三条核心建议</b>：① 热量抬到1200+，每餐加一份优质脂肪+蛋白（早餐半个牛油果、加餐换无糖酸奶+核桃、晚餐固定一掌心鱼肉）② 本周内至少3次三文鱼+每天半个牛油果+每天一小把坚果 ③ 入睡锁定23:30前——7/26做到23:03换来9h33+深睡62min+次日历史新低，这就是最直接的因果示范</li>
       <li>📌 <b>下次经期约8/16-8/23</b>，性激素六项须在<b>月经第2-5天</b>抽血才有参考价值，届时安排</li>
     </ul>
+  </div>
+
+  <!-- ═══════════ 归档导航：月份 + 日历 + 日/周/月视图 ═══════════ -->
+  <div class="card" id="archiveNav">
+    <div class="mnav">
+      <button class="mbtn2" id="prevM" onclick="stepMonth(-1)">‹</button>
+      <div class="mtitle" id="mTitle"></div>
+      <button class="mbtn2" id="nextM" onclick="stepMonth(1)">›</button>
+    </div>
+    <div class="mstats" id="mStats"></div>
+    <div class="cal" id="cal"></div>
+    <div class="vsw">
+      <button class="vbtn" data-v="day" onclick="setView('day')">按天</button>
+      <button class="vbtn" data-v="week" onclick="setView('week')">按周</button>
+      <button class="vbtn on" data-v="month" onclick="setView('month')">整月</button>
+      <span class="vhint" id="vHint"></span>
+    </div>
   </div>
 
   <div id="dailyCards"></div>
@@ -2338,7 +2400,7 @@ function renderDayCard(day, isLatest) {
     .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
   const arrowClass = isLatest ? 'open' : '';
   const bodyClass = isLatest ? '' : 'collapsed';
-  return `<div class="day-card">
+  return `<div class="day-card" id="d-${day.date}" data-date="${day.date}">
     <div class="day-header" onclick="document.getElementById('${id}').classList.toggle('collapsed');this.querySelector('.day-arrow').classList.toggle('open');">
       <span class="day-title"><span class="day-arrow ${arrowClass}">▶</span> 📅 ${day.date} ${day.weekday}</span>
       <span class="day-stats">
@@ -2416,18 +2478,150 @@ function renderWeekGroup(weekDays, weekIndex, isLatestWeek) {
   '</div>';
 }
 
-// Build week groups and render
-const weekGroups = {};
-DAYS.forEach(d => {
-  const wn = getWeekNumber(d.date);
-  if (!weekGroups[wn]) weekGroups[wn] = [];
-  weekGroups[wn].push(d);
-});
-const weekIndices = Object.keys(weekGroups).sort((a,b) => a-b);
-const latestWeekIdx = weekIndices.length - 1;
-document.getElementById('dailyCards').innerHTML = weekIndices.map((wn, i) =>
-  renderWeekGroup(weekGroups[wn], parseInt(wn), parseInt(wn) === parseInt(weekIndices[latestWeekIdx]))
-).join('');
+// ═══════════ 归档：月份 + 日历 + 日/周/月视图 ═══════════
+const BY_DATE = {};
+DAYS.forEach(d => { BY_DATE[d.date] = d; });
+
+const MONTHS = [];
+DAYS.forEach(d => { const m = d.date.slice(0,7); if (MONTHS.indexOf(m) < 0) MONTHS.push(m); });
+MONTHS.sort();
+
+let curMonth = MONTHS[MONTHS.length - 1];
+let selDate  = DAYS[DAYS.length - 1].date;
+let viewMode = 'month';
+
+function dayKcal(d) {
+  return [d.meals.breakfast, d.meals.lunch, d.meals.afternoon, d.meals.dinner]
+    .filter(Boolean).reduce((s,m) => s + (m.kcal||0), 0);
+}
+function dayProtein(d) {
+  return [d.meals.breakfast, d.meals.lunch, d.meals.afternoon, d.meals.dinner]
+    .filter(Boolean).reduce((s,m) => s + (m.protein||0), 0);
+}
+function monthDays(m) { return DAYS.filter(d => d.date.slice(0,7) === m); }
+
+// 本月概览
+function renderMonthStats() {
+  const ds = monthDays(curMonth);
+  const withFood = ds.filter(d => dayKcal(d) > 0);
+  const el = document.getElementById('mStats');
+  if (!ds.length) { el.innerHTML = ''; return; }
+  const avgK = withFood.length ? Math.round(withFood.reduce((s,d)=>s+dayKcal(d),0)/withFood.length) : 0;
+  const avgP = withFood.length ? Math.round(withFood.reduce((s,d)=>s+dayProtein(d),0)/withFood.length) : 0;
+  const exK  = ds.reduce((s,d)=>s+(d.exerciseKcal||0), 0);
+  const ws   = ds.filter(d => d.weightKg);
+  const dW   = ws.length > 1 ? (ws[ws.length-1].weightKg - ws[0].weightKg) : null;
+  el.innerHTML =
+    '<span><b>' + ds.length + '</b>天记录</span>' +
+    '<span><b>' + avgK + '</b>日均 kcal</span>' +
+    '<span><b>' + avgP + 'g</b>日均蛋白</span>' +
+    '<span><b>' + exK + '</b>运动 kcal</span>' +
+    (dW !== null ? '<span><b>' + (dW>0?'+':'') + dW.toFixed(2) + '</b>体重 kg</span>' : '');
+}
+
+// 日历
+function renderCal() {
+  const y = +curMonth.slice(0,4), mo = +curMonth.slice(5,7);
+  const first = new Date(y, mo-1, 1);
+  const total = new Date(y, mo, 0).getDate();
+  const lead = first.getDay();
+  const todayISO = new Date().toISOString().slice(0,10);
+
+  let h = '<div class="calhead">' +
+    ['日','一','二','三','四','五','六'].map(w => '<div>'+w+'</div>').join('') + '</div>';
+  let cells = [];
+  for (let i=0;i<lead;i++) cells.push('<button class="cell" disabled></button>');
+  for (let dnum=1; dnum<=total; dnum++) {
+    const iso = curMonth + '-' + (dnum<10?'0':'') + dnum;
+    const d = BY_DATE[iso];
+    if (!d) { cells.push('<button class="cell" disabled>' + dnum + '</button>'); continue; }
+    const k = dayKcal(d);
+    const cls = ['cell','has', d.evalType||'', iso===selDate?'sel':'', iso===todayISO?'today':''].join(' ');
+    cells.push('<button class="' + cls + '" onclick="pickDate(\'' + iso + '\')">' + dnum +
+               (k ? '<span class="kc">' + k + '</span>' : '') + '</button>');
+  }
+  while (cells.length % 7) cells.push('<button class="cell" disabled></button>');
+  for (let i=0;i<cells.length;i+=7) h += '<div class="calrow">' + cells.slice(i,i+7).join('') + '</div>';
+  document.getElementById('cal').innerHTML = h;
+
+  document.getElementById('mTitle').textContent = y + ' 年 ' + mo + ' 月';
+  document.getElementById('prevM').disabled = MONTHS.indexOf(curMonth) <= 0;
+  document.getElementById('nextM').disabled = MONTHS.indexOf(curMonth) >= MONTHS.length-1;
+  renderMonthStats();
+}
+
+// 卡片列表
+function renderCards() {
+  const box = document.getElementById('dailyCards');
+  dayIdCounter = 0;
+  let list;
+
+  if (viewMode === 'day') {
+    const d = BY_DATE[selDate];
+    box.innerHTML = d ? renderDayCard(d, true)
+                      : '<div class="card noday">这一天还没有记录</div>';
+    document.getElementById('vHint').textContent = '只看 ' + selDate;
+    return;
+  }
+
+  if (viewMode === 'week') {
+    const wn = getWeekNumber(selDate);
+    list = DAYS.filter(d => getWeekNumber(d.date) === wn);
+    box.innerHTML = list.length
+      ? renderWeekGroup(list, wn, true)
+      : '<div class="card noday">这一周还没有记录</div>';
+    document.getElementById('vHint').textContent =
+      list.length ? '第' + (wn+1) + '周 · ' + getWeekDateRange(list) : '';
+    return;
+  }
+
+  // month：按周分组，最后一组展开
+  list = monthDays(curMonth);
+  if (!list.length) {
+    box.innerHTML = '<div class="card noday">这个月还没有记录</div>';
+    document.getElementById('vHint').textContent = '';
+    return;
+  }
+  const gs = {};
+  list.forEach(d => { const wn = getWeekNumber(d.date); (gs[wn] = gs[wn] || []).push(d); });
+  const keys = Object.keys(gs).sort((a,b)=>a-b);
+  box.innerHTML = keys.map((wn,i) => renderWeekGroup(gs[wn], parseInt(wn), i === keys.length-1)).join('');
+  document.getElementById('vHint').textContent = list.length + ' 天';
+}
+
+function pickDate(iso) {
+  selDate = iso;
+  if (iso.slice(0,7) !== curMonth) curMonth = iso.slice(0,7);
+  renderCal();
+  renderCards();
+  // 跳到该天并展开
+  const card = document.getElementById('d-' + iso);
+  if (card) {
+    const body = card.querySelector('.day-body');
+    const arrow = card.querySelector('.day-arrow');
+    if (body && body.classList.contains('collapsed')) {
+      body.classList.remove('collapsed');
+      if (arrow) arrow.classList.add('open');
+    }
+    card.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+}
+function stepMonth(dir) {
+  const i = MONTHS.indexOf(curMonth) + dir;
+  if (i < 0 || i >= MONTHS.length) return;
+  curMonth = MONTHS[i];
+  const ds = monthDays(curMonth);
+  if (ds.length) selDate = ds[ds.length-1].date;
+  renderCal(); renderCards();
+}
+function setView(v) {
+  viewMode = v;
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  renderCards();
+}
+
+renderCal();
+renderCards();
 
 // ═══════════ NATIVE CANVAS CHARTS (no external dependencies) ═══════════
 function initCanvas(canvasId, h) {
