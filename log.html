@@ -40,12 +40,12 @@
   .card h2 .hint { font-size:.7rem; color: var(--muted); font-weight:400; }
 
   .row { display:flex; gap:8px; flex-wrap:wrap; }
-  .fld { flex:1 1 120px; min-width:110px; }
+  .fld { flex:1 1 120px; min-width:104px; }
   .fld label { display:block; font-size:.72rem; color: var(--muted); margin-bottom:3px; }
   input[type=text], input[type=number], input[type=time], input[type=date], textarea, select {
     width:100%; font-size:16px; font-family:inherit; color:var(--text);
     background:#fbfaf8; border:1px solid var(--border); border-radius:10px;
-    padding:9px 10px; outline:none;
+    padding:9px 10px; outline:none; min-height:40px;
   }
   input:focus, textarea:focus, select:focus { border-color: var(--accent); background:#fff; }
   input.miss, textarea.miss { border-color: var(--danger); background:#fdf4f3; }
@@ -66,9 +66,7 @@
   }
   .item .nm { flex:1; font-size:.86rem; font-weight:600; }
   .item .nm .fatmark { color: var(--warn); font-size:.72rem; margin-left:4px; }
-  .item input.qty {
-    width:56px; height:38px; text-align:center; padding:2px; font-size:15px; font-weight:600;
-  }
+  .item input.qty { width:56px; height:38px; text-align:center; padding:2px; font-size:15px; font-weight:600; min-height:38px; }
   .item .un { font-size:.75rem; color:var(--muted); min-width:20px; }
   .stp {
     width:38px; height:38px; border-radius:9px; border:1px solid var(--border);
@@ -76,11 +74,7 @@
     font-family:inherit; flex:none;
   }
   .stp:active { background:#eee; }
-  .del {
-    border:none; background:none; color:var(--muted); font-size:1.05rem;
-    width:38px; height:38px; cursor:pointer; flex:none;
-  }
-  .empty { font-size:.78rem; color:var(--muted); padding:6px 2px; }
+  .del { border:none; background:none; color:var(--muted); font-size:1.05rem; width:38px; height:38px; cursor:pointer; flex:none; }
 
   .grp { margin-bottom:10px; }
   .gt { font-size:.72rem; color:var(--muted); font-weight:600; margin-bottom:5px; }
@@ -94,22 +88,28 @@
   .chip.on { background: var(--accent); color:#fff; border-color: var(--accent); }
   .chip.fat { border-color:#e2c9a3; background:#fdf8ef; }
   .chip.fat.on { background: var(--warn); color:#fff; border-color: var(--warn); }
+  .chip.add { border-style:dashed; color:var(--muted); }
+  .chip .x { margin-left:5px; opacity:.55; font-size:.9em; }
+
+  .seg {
+    border:1px solid var(--border); border-radius:12px; padding:10px;
+    margin-bottom:8px; background:#fbfaf8;
+  }
+  .seg .sh { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+  .seg .sh .t { flex:1; font-size:.88rem; font-weight:700; }
 
   .banner { border-radius:10px; padding:9px 11px; font-size:.78rem; margin-bottom:10px; line-height:1.5; }
   .banner.bad { background:#fdf4f3; border:1px solid #e9c9c7; color:#8d3a37; }
   .banner.ok  { background:#f2f7f1; border:1px solid #cfe0cd; color:#3d6b3c; }
 
-  .out { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size:13px; min-height:190px; }
+  .out { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size:13px; min-height:210px; }
 
   .bar {
     position: fixed; left:0; right:0; bottom:0; padding:10px 12px calc(10px + env(safe-area-inset-bottom));
     background: rgba(246,244,240,.96); border-top:1px solid var(--border);
     display:flex; gap:8px; max-width:760px; margin:0 auto;
   }
-  .btn {
-    flex:1; padding:13px 0; border-radius:12px; border:none; font-family:inherit;
-    font-size:.92rem; font-weight:700; cursor:pointer;
-  }
+  .btn { flex:1; padding:13px 0; border-radius:12px; border:none; font-family:inherit; font-size:.92rem; font-weight:700; cursor:pointer; }
   .btn.primary { background: var(--accent); color:#fff; }
   .btn.ghost { background:#fff; color:var(--muted); border:1px solid var(--border); flex:0 0 92px; }
   .btn:active { opacity:.85; }
@@ -120,7 +120,7 @@
 
 <div class="header">
   <h1>🍱 快速录入</h1>
-  <div class="sub">点选即可 · 生成七行速记 · 复制发给 Claude</div>
+  <div class="sub">点选为主 · 任何地方都能自己填 · 生成速记粘给 Claude</div>
 </div>
 
 <div class="card">
@@ -139,18 +139,15 @@
     <div class="fld"><label>起床</label><input type="time" id="sleepEnd"></div>
     <div class="fld"><label>深睡 分钟</label><input type="number" inputmode="numeric" id="deep" placeholder="62"></div>
   </div>
-  <div id="sleepCalc" class="saved" style="text-align:left;margin-top:6px;"></div>
+  <div id="sleepCalc" class="saved" style="text-align:left;margin:6px 0 8px;"></div>
+  <div class="fld"><label>备注（午睡、夜醒、做梦…随便写）</label><input type="text" id="sleepNote" placeholder="选填"></div>
 </div>
 
 <div class="card">
-  <h2>🏃 运动</h2>
+  <h2>🏃 运动 <span class="hint">可以加很多段</span></h2>
+  <div id="exList"></div>
+  <div class="gt">加一段（点了就能填明细）</div>
   <div class="chips" id="exChips"></div>
-  <div id="exParts"></div>
-  <div class="row" style="margin-top:10px;">
-    <div class="fld"><label>距离 km</label><input type="number" inputmode="decimal" step="0.01" id="exKm" placeholder="2.44"></div>
-    <div class="fld"><label>时长 min</label><input type="number" inputmode="numeric" id="exMin" placeholder="30"></div>
-    <div class="fld"><label>消耗 kcal</label><input type="number" inputmode="numeric" id="exKcal" placeholder="148"></div>
-  </div>
 </div>
 
 <div class="card">
@@ -162,22 +159,50 @@
     <input type="text" id="variety" placeholder="西兰花 大头菜 蓝莓">
   </div>
   <div id="palette"></div>
-  <div class="row" style="margin-top:10px;">
-    <div class="fld" style="flex:1 1 150px;"><input type="text" id="customName" placeholder="其他食物…"></div>
-    <div class="fld" style="flex:0 0 78px;"><input type="text" id="customQty" placeholder="份量"></div>
+  <div class="gt" style="margin-top:12px;">自己加一样（会记进「我的常用」，下次点一下就有）</div>
+  <div class="row">
+    <div class="fld" style="flex:2 1 120px;"><input type="text" id="cName" placeholder="食物名"></div>
+    <div class="fld" style="flex:0 0 72px;"><input type="number" inputmode="decimal" id="cQty" placeholder="数量"></div>
+    <div class="fld" style="flex:0 0 74px;">
+      <select id="cUnit">
+        <option value="g">g</option><option value="ml">ml</option>
+        <option value="个">个</option><option value="片">片</option><option value="块">块</option>
+        <option value="颗">颗</option><option value="根">根</option><option value="勺">勺</option>
+        <option value="杯">杯</option><option value="份">份</option><option value="">（不填）</option>
+      </select>
+    </div>
     <button class="stp" style="width:44px;" onclick="addCustom()">＋</button>
   </div>
+  <label style="display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--muted);margin-top:8px;padding:8px 2px;">
+    <input type="checkbox" id="cFat" style="width:22px;height:22px;min-height:22px;flex:none;"> 这是脂肪源（油/坚果/肥肉一类）
+  </label>
+</div>
+
+<div class="card">
+  <h2>💊 补剂 / 用药</h2>
+  <div class="chips" id="suppChips"></div>
+  <div id="suppList" style="margin-top:10px;"></div>
+</div>
+
+<div class="card">
+  <h2>🩸 生理期</h2>
+  <div class="chips" id="periodChips"></div>
+  <div class="row" id="periodDetail" style="margin-top:10px;"></div>
 </div>
 
 <div class="card">
   <h2>📝 体感 / 症状</h2>
   <div id="fatBanner"></div>
   <textarea id="feel" rows="2" placeholder="没有就留空，生成时会写「—」"></textarea>
+  <div class="fld" style="margin-top:10px;">
+    <label>其他补充（想到什么写什么，格式不限，我都能看懂）</label>
+    <textarea id="note" rows="3" placeholder="例：今天下午特别困 / 换了新的酸奶牌子 / 外食没法称重，大概一碗"></textarea>
+  </div>
 </div>
 
 <div class="card">
   <h2>📤 生成结果 <span class="hint">长按可全选复制</span></h2>
-  <textarea class="out" id="out" rows="12" readonly placeholder="点下方「生成记录」"></textarea>
+  <textarea class="out" id="out" rows="14" readonly placeholder="点下方「生成记录」"></textarea>
   <div class="saved" id="savedTip"></div>
 </div>
 
@@ -187,54 +212,54 @@
 </div>
 
 <script>
-// ═══════════════ 食材库（30 种核心食材覆盖你 88% 的记录）═══════════════
+// ═══════════════ 常量库（都可以在页面上自己加）═══════════════
 var FOODS = [
   { g:'蛋白源', items:[
-    {n:'水煮蛋', u:'个', d:1},
-    {n:'蛋清',   u:'个', d:1},
-    {n:'基围虾', u:'个', d:2},
-    {n:'牛肉',   u:'片', d:2},
-    {n:'鸡腿',   u:'个', d:1},
-    {n:'鸡胸肉', u:'g',  d:80},
-    {n:'鱼',     u:'g',  d:100},
-    {n:'海参',   u:'根', d:1},
-    {n:'豆腐',   u:'g',  d:100},
-    {n:'无糖豆浆', u:'ml', d:200},
-    {n:'全脂牛奶', u:'ml', d:200},
-    {n:'无糖酸奶', u:'g',  d:100}
+    {n:'水煮蛋', u:'个', d:1}, {n:'蛋清', u:'个', d:1},
+    {n:'基围虾', u:'个', d:2}, {n:'牛肉', u:'片', d:2},
+    {n:'鸡腿', u:'个', d:1},   {n:'鸡胸肉', u:'g', d:80},
+    {n:'鱼', u:'g', d:100},    {n:'海参', u:'根', d:1},
+    {n:'豆腐', u:'g', d:100},  {n:'无糖豆浆', u:'ml', d:200},
+    {n:'全脂牛奶', u:'ml', d:200}, {n:'无糖酸奶', u:'g', d:100}
   ]},
   { g:'主食 / 淀粉', items:[
-    {n:'杂粮饭', u:'g', d:60},
-    {n:'糙米饭', u:'g', d:60},
-    {n:'荞麦面', u:'g', d:100},
-    {n:'玉米',   u:'份', d:0.25},
-    {n:'土豆',   u:'片', d:2},
-    {n:'紫薯',   u:'块', d:2},
-    {n:'红薯',   u:'块', d:2},
-    {n:'南瓜',   u:'g', d:100},
-    {n:'山药',   u:'g', d:100},
-    {n:'全麦馒头', u:'个', d:1}
+    {n:'杂粮饭', u:'g', d:60}, {n:'糙米饭', u:'g', d:60},
+    {n:'荞麦面', u:'g', d:100},{n:'玉米', u:'份', d:0.25},
+    {n:'土豆', u:'片', d:2},   {n:'紫薯', u:'块', d:2},
+    {n:'红薯', u:'块', d:2},   {n:'南瓜', u:'g', d:100},
+    {n:'山药', u:'g', d:100},  {n:'全麦馒头', u:'个', d:1}
   ]},
   { g:'蔬菜 / 水果（默认按份；要精确时用克数）', items:[
-    {n:'蔬菜', u:'份', d:1,   label:'蔬菜 份'},
+    {n:'蔬菜', u:'份', d:1, label:'蔬菜 份'},
     {n:'蔬菜', u:'g',  d:100, label:'蔬菜 克数'},
-    {n:'水果', u:'份', d:1,   label:'水果 份'},
+    {n:'水果', u:'份', d:1, label:'水果 份'},
     {n:'水果', u:'g',  d:100, label:'水果 克数'}
   ]},
-  { g:'⭐ 脂肪源（HDL 关键，每天至少 1 项）', fat:true, items:[
-    {n:'橄榄油',   u:'勺', d:1,   fat:true},
-    {n:'坚果',     u:'g',  d:20,  fat:true},
-    {n:'牛油果',   u:'个', d:0.5, fat:true},
-    {n:'三文鱼',   u:'g',  d:100, fat:true},
-    {n:'奇亚籽',   u:'勺', d:1,   fat:true},
-    {n:'整蛋黄',   u:'个', d:1,   fat:true}
+  { g:'⭐ 脂肪源（HDL 关键，每天至少 1 项）', items:[
+    {n:'橄榄油', u:'勺', d:1, fat:true}, {n:'坚果', u:'g', d:20, fat:true},
+    {n:'牛油果', u:'个', d:0.5, fat:true}, {n:'三文鱼', u:'g', d:100, fat:true},
+    {n:'奇亚籽', u:'勺', d:1, fat:true}, {n:'整蛋黄', u:'个', d:1, fat:true}
   ]},
   { g:'饮品', items:[
-    {n:'黑咖啡',   u:'杯', d:1},
-    {n:'美式(去奶基)', u:'杯', d:1},
-    {n:'淡茶',     u:'杯', d:1}
+    {n:'黑咖啡', u:'杯', d:1}, {n:'美式(去奶基)', u:'杯', d:1}, {n:'淡茶', u:'杯', d:1}
   ]}
 ];
+
+// 运动类型：取自你实际做过的项目
+var EX_TYPES = ['户外步行','室内爬坡','跑步机','力量训练','私教课','椭圆仪',
+                '羽毛球','跳舞','游泳','骑行','超慢跑','家务','通勤步行','休息日'];
+var EX_PARTS = ['腿','臀','背','胸','肩','肱二头肌','肱三头肌','核心','全身'];
+var SUPPS    = ['易善复','维生素D','Omega-3','复合维生素'];
+var PERIODS  = ['无','量少','量中','量多'];
+
+var LS = 'leynarry-log-';
+var LS_FOOD = 'leynarry-custom-foods';
+var LS_EX   = 'leynarry-custom-ex';
+var LS_SUPP = 'leynarry-custom-supp';
+var LS_PART = 'leynarry-custom-part';
+
+var cur = 'breakfast';
+var S = null;
 
 var MEALS = [
   { k:'breakfast', label:'早', out:'早' },
@@ -243,22 +268,28 @@ var MEALS = [
   { k:'dinner',    label:'晚', out:'晚' }
 ];
 
-var EX_TYPES = ['无', '户外步行', '室内爬坡', '力量训练', '骑行', '其他'];
-var EX_PARTS = ['腿', '臀', '背', '胸', '肩', '手臂', '核心', '全身'];
-
-var LS_PREFIX = 'leynarry-log-';
-var cur = 'breakfast';
-var S = null;
+// ═══════════════ 自定义库 ═══════════════
+function getLib(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } }
+function putLib(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch(e) {} }
+function addLib(key, val, isObj) {
+  var lib = getLib(key);
+  for (var i=0;i<lib.length;i++) {
+    if (isObj ? (lib[i].n === val.n && lib[i].u === val.u) : (lib[i] === val)) return lib;
+  }
+  lib.push(val); putLib(key, lib); return lib;
+}
+function rmLib(key, idx) { var lib = getLib(key); lib.splice(idx,1); putLib(key, lib); return lib; }
 
 // ═══════════════ 状态 ═══════════════
 function blank(d) {
   return {
     date: d, weight:'', water:'',
-    sleepStart:'', sleepEnd:'', deep:'',
-    exType:'', exParts:[], exKm:'', exMin:'', exKcal:'',
+    sleepStart:'', sleepEnd:'', deep:'', sleepNote:'',
+    ex: [],
     meals: { breakfast:[], lunch:[], afternoon:[], dinner:[] },
     variety: { breakfast:'', lunch:'', afternoon:'', dinner:'' },
-    feel: ''
+    supp: [], period:'', periodDay:'',
+    feel:'', note:''
   };
 }
 function todayStr() {
@@ -266,36 +297,155 @@ function todayStr() {
   return t.getFullYear()+'-'+p(t.getMonth()+1)+'-'+p(t.getDate());
 }
 function load(d) {
+  var b = blank(d);
   try {
-    var raw = localStorage.getItem(LS_PREFIX + d);
+    var raw = localStorage.getItem(LS + d);
     if (raw) {
       var o = JSON.parse(raw);
-      var b = blank(d);
-      for (var k in b) if (!(k in o)) o[k] = b[k];
+      for (var k in b) if (!(k in o) || o[k] === null) o[k] = b[k];
       for (var i=0;i<MEALS.length;i++) {
         var mk = MEALS[i].k;
-        if (!o.meals[mk]) o.meals[mk] = [];
-        if (!o.variety || o.variety[mk] === undefined) {
-          o.variety = o.variety || {}; o.variety[mk] = '';
-        }
+        if (!o.meals || !o.meals[mk]) { o.meals = o.meals || {}; o.meals[mk] = []; }
+        if (!o.variety || o.variety[mk] === undefined) { o.variety = o.variety || {}; o.variety[mk] = ''; }
+      }
+      // 兼容旧草稿的单段运动结构
+      if (!o.ex.length && o.exType && o.exType !== '无') {
+        o.ex = [{ t:o.exType, parts:o.exParts||[], km:o.exKm||'', min:o.exMin||'', kcal:o.exKcal||'' }];
       }
       return o;
     }
   } catch(e) {}
-  return blank(d);
+  return b;
 }
 function save() {
   try {
-    localStorage.setItem(LS_PREFIX + S.date, JSON.stringify(S));
-    var t = new Date();
+    localStorage.setItem(LS + S.date, JSON.stringify(S));
     document.getElementById('savedTip').textContent =
-      '草稿已保存 ' + t.toTimeString().slice(0,5) + '（换手机/刷新都不会丢）';
+      '草稿已保存 ' + new Date().toTimeString().slice(0,5) + '（换手机/刷新都不会丢）';
   } catch(e) {
     document.getElementById('savedTip').textContent = '⚠️ 本地保存不可用，生成后请尽快复制';
   }
 }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function mins(t) { var p = t.split(':'); return (+p[0])*60 + (+p[1]); }
+function round2(x) { return Math.round(x*100)/100; }
 
-// ═══════════════ 渲染 ═══════════════
+// ═══════════════ 运动（多段）═══════════════
+function renderEx() {
+  var h = '';
+  for (var i=0;i<S.ex.length;i++) {
+    var e = S.ex[i];
+    h += '<div class="seg">' +
+      '<div class="sh"><span class="t">' + esc(e.t) + '</span>' +
+      '<button class="del" onclick="delEx(' + i + ')">✕</button></div>';
+    if (e.t !== '休息日') {
+      h += '<div class="row">' +
+        '<div class="fld"><label>距离 km</label><input type="number" inputmode="decimal" step="0.01" value="' + esc(e.km) + '" oninput="setEx(' + i + ',\'km\',this.value)" placeholder="选填"></div>' +
+        '<div class="fld"><label>时长 min</label><input type="number" inputmode="numeric" value="' + esc(e.min) + '" oninput="setEx(' + i + ',\'min\',this.value)" placeholder="选填"></div>' +
+        '<div class="fld"><label>消耗 kcal</label><input type="number" inputmode="numeric" value="' + esc(e.kcal) + '" oninput="setEx(' + i + ',\'kcal\',this.value)" placeholder="选填"></div>' +
+        '</div>';
+      h += '<div class="gt" style="margin:10px 0 5px;">练的部位（选填，可多选）</div><div class="chips">';
+      var parts = EX_PARTS.concat(getLib(LS_PART));
+      for (var j=0;j<parts.length;j++) {
+        var on = e.parts.indexOf(parts[j]) >= 0 ? ' on' : '';
+        h += '<button class="chip' + on + '" onclick="togglePart(' + i + ',\'' + esc(parts[j]) + '\')">' + esc(parts[j]) + '</button>';
+      }
+      h += '<button class="chip add" onclick="addPart(' + i + ')">＋ 自己填</button>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  document.getElementById('exList').innerHTML = h;
+
+  var c = '', lib = getLib(LS_EX);
+  for (var i=0;i<EX_TYPES.length;i++)
+    c += '<button class="chip" onclick="pushEx(\'' + esc(EX_TYPES[i]) + '\')">' + esc(EX_TYPES[i]) + '</button>';
+  for (var i=0;i<lib.length;i++)
+    c += '<button class="chip" onclick="pushEx(\'' + esc(lib[i]) + '\')">' + esc(lib[i]) +
+         '<span class="x" onclick="event.stopPropagation();dropEx(' + i + ')">✕</span></button>';
+  c += '<button class="chip add" onclick="newExType()">＋ 自己填运动</button>';
+  document.getElementById('exChips').innerHTML = c;
+}
+function pushEx(t) { S.ex.push({ t:t, parts:[], km:'', min:'', kcal:'' }); save(); renderEx(); }
+function newExType() {
+  var t = prompt('运动名称（会记住，下次点一下就有）');
+  if (!t) return;
+  t = t.trim(); if (!t) return;
+  addLib(LS_EX, t, false);
+  pushEx(t);
+}
+function dropEx(i) { rmLib(LS_EX, i); renderEx(); }
+function delEx(i) { S.ex.splice(i,1); save(); renderEx(); }
+function setEx(i, k, v) { S.ex[i][k] = v; save(); }
+function togglePart(i, p) {
+  var a = S.ex[i].parts, j = a.indexOf(p);
+  if (j >= 0) a.splice(j,1); else a.push(p);
+  save(); renderEx();
+}
+function addPart(i) {
+  var p = prompt('部位名称（会记住）');
+  if (!p) return;
+  p = p.trim(); if (!p) return;
+  addLib(LS_PART, p, false);
+  if (S.ex[i].parts.indexOf(p) < 0) S.ex[i].parts.push(p);
+  save(); renderEx();
+}
+
+// ═══════════════ 饮食 ═══════════════
+function has(n, u) {
+  var l = S.meals[cur];
+  for (var i=0;i<l.length;i++) if (l[i].n === n && l[i].u === u) return true;
+  return false;
+}
+function allGroups() {
+  var lib = getLib(LS_FOOD), g = FOODS.slice();
+  if (lib.length) g.push({ g:'⭐ 我的常用（自己加的）', items:lib, mine:true });
+  return g;
+}
+function renderPalette() {
+  var groups = allGroups(), h = '';
+  for (var i=0;i<groups.length;i++) {
+    var grp = groups[i];
+    h += '<div class="grp"><div class="gt">' + esc(grp.g) + '</div><div class="chips">';
+    for (var j=0;j<grp.items.length;j++) {
+      var f = grp.items[j];
+      var on = has(f.n, f.u) ? ' on' : '';
+      h += '<button class="chip' + (f.fat?' fat':'') + on + '" onclick="addFood(' + i + ',' + j + ')">' +
+           esc(f.label || f.n) +
+           (grp.mine ? '<span class="x" onclick="event.stopPropagation();dropFood(' + j + ')">✕</span>' : '') +
+           '</button>';
+    }
+    h += '</div></div>';
+  }
+  document.getElementById('palette').innerHTML = h;
+}
+function addFood(gi, fi) {
+  var f = allGroups()[gi].items[fi], l = S.meals[cur];
+  for (var i=0;i<l.length;i++) {
+    if (l[i].n === f.n && l[i].u === f.u) { l[i].q = round2((+l[i].q) + (+f.d)); after(); return; }
+  }
+  l.push({ n:f.n, q:f.d, u:f.u, fat: !!f.fat });
+  after();
+}
+function dropFood(j) { rmLib(LS_FOOD, j); renderPalette(); }
+function addCustom() {
+  var n = document.getElementById('cName').value.trim();
+  if (!n) { document.getElementById('cName').focus(); return; }
+  var qv = document.getElementById('cQty').value.trim();
+  var u  = document.getElementById('cUnit').value;
+  var fat = document.getElementById('cFat').checked;
+  var q = qv === '' ? '适量' : round2(parseFloat(qv));
+  if (qv !== '' && isNaN(q)) q = qv;
+  if (qv === '') u = '';   // 没填数量就别带单位
+  addLib(LS_FOOD, { n:n, u:u, d:(qv===''?'适量':q), fat:fat }, true);
+  S.meals[cur].push({ n:n, q:q, u:u, fat:fat, free:(q==='适量') });
+  document.getElementById('cName').value = '';
+  document.getElementById('cQty').value = '';
+  document.getElementById('cFat').checked = false;
+  after();
+}
 function renderTabs() {
   var h = '';
   for (var i=0;i<MEALS.length;i++) {
@@ -307,147 +457,122 @@ function renderTabs() {
 }
 function renderItems() {
   var list = S.meals[cur], h = '';
-  if (!list.length) {
-    h = '<div class="empty">这一餐还没有内容 —— 点下面的按钮添加，或留空表示没吃</div>';
-  }
+  if (!list.length) h = '<div class="gt" style="padding:6px 2px;">这一餐还没有内容 —— 点下面添加，或留空表示没吃</div>';
   for (var i=0;i<list.length;i++) {
     var it = list[i];
     h += '<div class="item">' +
       '<span class="nm">' + esc(it.n) + (it.fat ? '<span class="fatmark">⭐脂肪源</span>' : '') + '</span>' +
-      '<button class="stp" onclick="bump(' + i + ',-1)">−</button>' +
-      '<input class="qty" type="number" inputmode="decimal" step="any" value="' + it.q + '" onchange="setQty(' + i + ',this.value)">' +
+      (it.free ? '' : '<button class="stp" onclick="bump(' + i + ',-1)">−</button>') +
+      '<input class="qty" type="text" inputmode="decimal" value="' + esc(it.q) + '" onchange="setQty(' + i + ',this.value)">' +
       '<span class="un">' + esc(it.u) + '</span>' +
-      '<button class="stp" onclick="bump(' + i + ',1)">＋</button>' +
+      (it.free ? '' : '<button class="stp" onclick="bump(' + i + ',1)">＋</button>') +
       '<button class="del" onclick="del(' + i + ')">✕</button>' +
     '</div>';
   }
   document.getElementById('items').innerHTML = h;
   document.getElementById('variety').value = S.variety[cur] || '';
 }
-function renderPalette() {
-  var h = '';
-  for (var i=0;i<FOODS.length;i++) {
-    var grp = FOODS[i];
-    h += '<div class="grp"><div class="gt">' + esc(grp.g) + '</div><div class="chips">';
-    for (var j=0;j<grp.items.length;j++) {
-      var f = grp.items[j];
-      var on = has(f.n, f.u) ? ' on' : '';
-      h += '<button class="chip' + (f.fat?' fat':'') + on + '" onclick="addFood(' + i + ',' + j + ')">' +
-           esc(f.label || f.n) + '</button>';
-    }
-    h += '</div></div>';
-  }
-  document.getElementById('palette').innerHTML = h;
+function switchMeal(k) { cur = k; renderTabs(); renderItems(); renderPalette(); }
+function bump(i, dir) {
+  var it = S.meals[cur][i];
+  var step = (it.u === 'g' || it.u === 'ml') ? 10 : (it.u === '份' ? 0.25 : 1);
+  var v = parseFloat(it.q); if (isNaN(v)) return;
+  it.q = round2(Math.max(0, v + dir*step));
+  if (it.q === 0) S.meals[cur].splice(i,1);
+  after();
 }
-function renderEx() {
-  var h = '';
-  for (var i=0;i<EX_TYPES.length;i++) {
-    h += '<button class="chip' + (S.exType===EX_TYPES[i]?' on':'') +
-         '" onclick="setEx(\'' + EX_TYPES[i] + '\')">' + EX_TYPES[i] + '</button>';
-  }
-  document.getElementById('exChips').innerHTML = h;
+function setQty(i, v) {
+  var it = S.meals[cur][i];
+  v = String(v).trim();
+  if (v === '') { S.meals[cur].splice(i,1); after(); return; }
+  var x = parseFloat(v);
+  if (isNaN(x)) { it.q = v; it.free = true; }        // 允许写「适量」「一碗」这类
+  else { it.q = round2(x); it.free = false; }
+  after();
+}
+function del(i) { S.meals[cur].splice(i,1); after(); }
+function after() { save(); renderTabs(); renderItems(); renderPalette(); renderFatBanner(); }
 
-  var pe = document.getElementById('exParts');
-  if (S.exType !== '力量训练') { pe.innerHTML = ''; return; }
-  var p = '<div class="gt" style="margin:10px 0 5px;">今天练的部位（可多选）</div><div class="chips">';
-  for (var i=0;i<EX_PARTS.length;i++) {
-    var on = S.exParts.indexOf(EX_PARTS[i]) >= 0 ? ' on' : '';
-    p += '<button class="chip' + on + '" onclick="togglePart(\'' + EX_PARTS[i] + '\')">' + EX_PARTS[i] + '</button>';
+// ═══════════════ 补剂 ═══════════════
+function renderSupp() {
+  var lib = getLib(LS_SUPP), c = '';
+  for (var i=0;i<SUPPS.length;i++)
+    c += '<button class="chip" onclick="pushSupp(\'' + esc(SUPPS[i]) + '\')">' + esc(SUPPS[i]) + '</button>';
+  for (var i=0;i<lib.length;i++)
+    c += '<button class="chip" onclick="pushSupp(\'' + esc(lib[i]) + '\')">' + esc(lib[i]) +
+         '<span class="x" onclick="event.stopPropagation();dropSupp(' + i + ')">✕</span></button>';
+  c += '<button class="chip add" onclick="newSupp()">＋ 自己填</button>';
+  document.getElementById('suppChips').innerHTML = c;
+
+  var h = '';
+  for (var i=0;i<S.supp.length;i++) {
+    h += '<div class="item">' +
+      '<span class="nm">' + esc(S.supp[i].n) + '</span>' +
+      '<input type="text" style="flex:0 0 130px;min-height:38px;" value="' + esc(S.supp[i].d) +
+      '" placeholder="剂量，如 6粒" oninput="setSupp(' + i + ',this.value)">' +
+      '<button class="del" onclick="delSupp(' + i + ')">✕</button></div>';
   }
-  p += '</div>';
-  pe.innerHTML = p;
+  document.getElementById('suppList').innerHTML = h;
 }
-function togglePart(t) {
-  var i = S.exParts.indexOf(t);
-  if (i >= 0) S.exParts.splice(i, 1); else S.exParts.push(t);
-  save(); renderEx();
+function pushSupp(n) {
+  for (var i=0;i<S.supp.length;i++) if (S.supp[i].n === n) return;
+  var d = (n === '易善复') ? '6粒（随三餐各2粒）' : '';
+  S.supp.push({ n:n, d:d }); save(); renderSupp();
 }
+function newSupp() {
+  var n = prompt('补剂/药名（会记住）'); if (!n) return;
+  n = n.trim(); if (!n) return;
+  addLib(LS_SUPP, n, false); pushSupp(n); renderSupp();
+}
+function dropSupp(i) { rmLib(LS_SUPP, i); renderSupp(); }
+function setSupp(i, v) { S.supp[i].d = v; save(); }
+function delSupp(i) { S.supp.splice(i,1); save(); renderSupp(); }
+
+// ═══════════════ 生理期 ═══════════════
+function renderPeriod() {
+  var c = '';
+  for (var i=0;i<PERIODS.length;i++)
+    c += '<button class="chip' + (S.period===PERIODS[i]?' on':'') +
+         '" onclick="setPeriod(\'' + PERIODS[i] + '\')">' + PERIODS[i] + '</button>';
+  document.getElementById('periodChips').innerHTML = c;
+  document.getElementById('periodDetail').innerHTML =
+    (S.period && S.period !== '无')
+      ? '<div class="fld"><label>第几天</label><input type="number" inputmode="numeric" value="' +
+        esc(S.periodDay) + '" oninput="S.periodDay=this.value;save();" placeholder="3"></div>'
+      : '';
+}
+function setPeriod(p) { S.period = (S.period === p ? '' : p); save(); renderPeriod(); }
+
+// ═══════════════ 其他渲染 ═══════════════
 function renderFatBanner() {
   var n = 0;
   for (var i=0;i<MEALS.length;i++) {
     var l = S.meals[MEALS[i].k];
     for (var j=0;j<l.length;j++) if (l[j].fat) n++;
   }
-  var el = document.getElementById('fatBanner');
-  if (n === 0) {
-    el.innerHTML = '<div class="banner bad">🔴 <b>今天还没有任何脂肪源</b>。HDL-C 0.71 是你唯一在恶化的指标，' +
-                   '橄榄油一勺 / 坚果 20g / 牛油果半个，任选一个。</div>';
-  } else {
-    el.innerHTML = '<div class="banner ok">✅ 今天有 ' + n + ' 项脂肪源，方向对了。</div>';
-  }
+  document.getElementById('fatBanner').innerHTML = n === 0
+    ? '<div class="banner bad">🔴 <b>今天还没有任何脂肪源</b>。HDL-C 0.71 是你唯一在恶化的指标，橄榄油一勺 / 坚果 20g / 牛油果半个，任选一个。</div>'
+    : '<div class="banner ok">✅ 今天有 ' + n + ' 项脂肪源，方向对了。</div>';
 }
 function renderSleep() {
   var a = S.sleepStart, b = S.sleepEnd, el = document.getElementById('sleepCalc');
   if (!a || !b) { el.textContent = ''; return; }
   var m = mins(b) - mins(a); if (m < 0) m += 1440;
-  var hh = Math.floor(m/60), mm = m%60;
   var tag = m >= 450 ? '✅ 达标' : (m >= 420 ? '⚠️ 偏少' : '🔴 严重不足');
   var late = (mins(a) >= 0 && mins(a) < 360) ? '　🔴 过零点' : '';
-  el.textContent = '共 ' + hh + 'h' + (mm<10?'0':'') + mm + 'min　' + tag + late;
+  el.textContent = '共 ' + Math.floor(m/60) + 'h' + (m%60<10?'0':'') + (m%60) + 'min　' + tag + late;
 }
-function renderAll() {
-  renderTabs(); renderItems(); renderPalette(); renderEx(); renderFatBanner(); renderSleep();
-}
-
-// ═══════════════ 操作 ═══════════════
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function mins(t) { var p = t.split(':'); return (+p[0])*60 + (+p[1]); }
-function has(n, u) {
-  var l = S.meals[cur];
-  for (var i=0;i<l.length;i++) if (l[i].n === n && l[i].u === u) return true;
-  return false;
-}
-function switchMeal(k) { cur = k; renderTabs(); renderItems(); renderPalette(); }
-function addFood(gi, fi) {
-  var f = FOODS[gi].items[fi], l = S.meals[cur];
-  for (var i=0;i<l.length;i++) {
-    if (l[i].n === f.n && l[i].u === f.u) { l[i].q = round2(l[i].q + f.d); after(); return; }
-  }
-  l.push({ n:f.n, q:f.d, u:f.u, fat: !!f.fat });
-  after();
-}
-function addCustom() {
-  var n = document.getElementById('customName').value.trim();
-  if (!n) return;
-  var q = document.getElementById('customQty').value.trim() || '适量';
-  S.meals[cur].push({ n:n, q:q, u:'', fat:false, free:true });
-  document.getElementById('customName').value = '';
-  document.getElementById('customQty').value = '';
-  after();
-}
-function bump(i, dir) {
-  var it = S.meals[cur][i];
-  if (it.free) return;
-  var step = (it.u === 'g' || it.u === 'ml') ? 10 : (it.u === '份' ? 0.25 : 1);
-  it.q = round2(Math.max(0, (+it.q) + dir*step));
-  if (it.q === 0) S.meals[cur].splice(i, 1);
-  after();
-}
-function setQty(i, v) {
-  var it = S.meals[cur][i];
-  if (it.free) { it.q = v; } else {
-    var x = parseFloat(v);
-    if (isNaN(x) || x <= 0) { S.meals[cur].splice(i, 1); } else { it.q = round2(x); }
-  }
-  after();
-}
-function del(i) { S.meals[cur].splice(i, 1); after(); }
-function setEx(t) { S.exType = t; save(); renderEx(); }
-function round2(x) { return Math.round(x * 100) / 100; }
-function after() { save(); renderTabs(); renderItems(); renderPalette(); renderFatBanner(); }
+function renderAll() { renderTabs(); renderItems(); renderPalette(); renderEx(); renderSupp(); renderPeriod(); renderFatBanner(); renderSleep(); }
 
 function clearDay() {
-  if (!confirm('清空 ' + S.date + ' 的全部内容？')) return;
+  if (!confirm('清空 ' + S.date + ' 的全部内容？（「我的常用」不会删）')) return;
   S = blank(S.date);
-  try { localStorage.removeItem(LS_PREFIX + S.date); } catch(e) {}
+  try { localStorage.removeItem(LS + S.date); } catch(e) {}
   bindToInputs(); renderAll();
   document.getElementById('out').value = '';
 }
 
-// ═══════════════ 输入绑定 ═══════════════
-var SIMPLE = ['weight','water','sleepStart','sleepEnd','deep','exKm','exMin','exKcal','feel'];
+var SIMPLE = ['weight','water','sleepStart','sleepEnd','deep','sleepNote','feel','note'];
 function bindToInputs() {
   document.getElementById('date').value = S.date;
   for (var i=0;i<SIMPLE.length;i++) document.getElementById(SIMPLE[i]).value = S[SIMPLE[i]];
@@ -459,27 +584,34 @@ function wire() {
   });
   for (var i=0;i<SIMPLE.length;i++) {
     (function(k) {
-      var el = document.getElementById(k);
-      el.addEventListener('input', function() {
+      document.getElementById(k).addEventListener('input', function() {
         S[k] = this.value; this.classList.remove('miss'); save();
         if (k === 'sleepStart' || k === 'sleepEnd') renderSleep();
       });
     })(SIMPLE[i]);
   }
-  document.getElementById('variety').addEventListener('input', function() {
-    S.variety[cur] = this.value; save();
-  });
+  document.getElementById('variety').addEventListener('input', function() { S.variety[cur] = this.value; save(); });
+  document.getElementById('cName').addEventListener('keydown', function(e) { if (e.key === 'Enter') addCustom(); });
+  document.getElementById('cQty').addEventListener('keydown', function(e) { if (e.key === 'Enter') addCustom(); });
 }
 
-// ═══════════════ 生成七行速记 ═══════════════
+// ═══════════════ 生成速记 ═══════════════
 function fmtItem(it) {
-  if (it.free) return it.n + (it.q && it.q !== '适量' ? it.q : '');
-  var q = it.q;
   if (it.n === '玉米' && it.u === '份') {
     var map = { 0.25:'¼', 0.5:'½', 0.75:'¾', 1:'1' };
-    return '玉米' + (map[q] || q + '份');
+    return '玉米' + (map[it.q] || it.q + '份');
   }
-  return it.n + q + it.u;
+  // 数量写成「适量」「两勺」这类文字时，不再拼单位
+  if (isNaN(parseFloat(it.q))) return it.n + it.q;
+  return it.n + it.q + it.u;
+}
+function fmtEx(e) {
+  if (e.t === '休息日') return '休息日';
+  var p = [];
+  if (e.km)   p.push(e.km + 'km');
+  if (e.min)  p.push(e.min + 'min');
+  if (e.kcal) p.push(e.kcal + 'kcal');
+  return e.t + (e.parts.length ? '（' + e.parts.join('+') + '）' : '') + (p.length ? ' ' + p.join('/') : '');
 }
 function build() {
   var L = [], missing = [];
@@ -493,20 +625,15 @@ function build() {
 
   if (S.sleepStart && S.sleepEnd) {
     var m = mins(S.sleepEnd) - mins(S.sleepStart); if (m < 0) m += 1440;
-    L.push('睡 ' + S.sleepStart + '-' + S.sleepEnd +
-           '（' + Math.floor(m/60) + 'h' + (m%60) + 'min）' +
-           (S.deep ? ' 深' + S.deep : ' 深—'));
+    L.push('睡 ' + S.sleepStart + '-' + S.sleepEnd + '（' + Math.floor(m/60) + 'h' + (m%60) + 'min）' +
+           (S.deep ? ' 深' + S.deep : ' 深—') + (S.sleepNote.trim() ? '　' + S.sleepNote.trim() : ''));
   } else { missing.push('睡眠'); L.push('睡 —'); }
 
-  if (!S.exType) { missing.push('运动'); L.push('动 —'); }
-  else if (S.exType === '无') { L.push('动 无'); }
+  if (!S.ex.length) { missing.push('运动'); L.push('动 —'); }
   else {
-    var p = [];
-    if (S.exKm)   p.push(S.exKm + 'km');
-    if (S.exMin)  p.push(S.exMin + 'min');
-    if (S.exKcal) p.push(S.exKcal + 'kcal');
-    var parts = (S.exType === '力量训练' && S.exParts.length) ? '（' + S.exParts.join('+') + '）' : '';
-    L.push('动 ' + S.exType + parts + (p.length ? ' ' + p.join('/') : ''));
+    var segs = [];
+    for (var i=0;i<S.ex.length;i++) segs.push(fmtEx(S.ex[i]));
+    L.push('动 ' + segs.join('  ｜  '));
   }
 
   for (var i=0;i<MEALS.length;i++) {
@@ -525,38 +652,38 @@ function build() {
   }
   L.push('油 ' + (fats.length ? fats.join(' ') : '— 🔴今天没有脂肪源'));
 
-  L.push('感 ' + (S.feel.trim() || '—'));
+  if (S.supp.length) {
+    var sp = [];
+    for (var i=0;i<S.supp.length;i++) sp.push(S.supp[i].n + (S.supp[i].d ? ' ' + S.supp[i].d : ''));
+    L.push('药 ' + sp.join('　'));
+  }
+  if (S.period) L.push('🩸 ' + S.period + (S.periodDay ? '（第' + S.periodDay + '天）' : ''));
 
+  L.push('感 ' + (S.feel.trim() || '—'));
+  if (S.note.trim()) L.push('补充 ' + S.note.trim());
   if (missing.length) L.push('（未填：' + missing.join('、') + '）');
   return { text: L.join('\n'), missing: missing };
 }
 
 function genAndCopy() {
-  var r = build();
-  var out = document.getElementById('out');
+  var r = build(), out = document.getElementById('out');
   out.value = r.text;
-
   for (var i=0;i<SIMPLE.length;i++) document.getElementById(SIMPLE[i]).classList.remove('miss');
   var map = { '体重':'weight', '饮水':'water', '睡眠':'sleepStart' };
-  for (var i=0;i<r.missing.length;i++) {
-    var id = map[r.missing[i]];
-    if (id) document.getElementById(id).classList.add('miss');
-  }
+  for (var i=0;i<r.missing.length;i++) if (map[r.missing[i]]) document.getElementById(map[r.missing[i]]).classList.add('miss');
   save();
 
   var done = function(ok) {
-    var tip = document.getElementById('savedTip');
-    tip.textContent = ok
+    document.getElementById('savedTip').textContent = ok
       ? '✅ 已复制到剪贴板，直接粘给 Claude 就行'
       : '⚠️ 自动复制不可用 —— 长按上面的文本框全选复制';
     if (!ok) { out.focus(); out.select(); }
   };
   try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (navigator.clipboard && navigator.clipboard.writeText)
       navigator.clipboard.writeText(r.text).then(function(){ done(true); }, function(){ legacy(out, done); });
-    } else { legacy(out, done); }
+    else legacy(out, done);
   } catch(e) { legacy(out, done); }
-
   out.scrollIntoView({ behavior:'smooth', block:'center' });
 }
 function legacy(out, done) {
@@ -564,12 +691,11 @@ function legacy(out, done) {
     out.removeAttribute('readonly');
     out.focus(); out.select(); out.setSelectionRange(0, 99999);
     var ok = document.execCommand('copy');
-    out.setAttribute('readonly', 'readonly');
+    out.setAttribute('readonly','readonly');
     done(ok);
   } catch(e) { done(false); }
 }
 
-// ═══════════════ 启动 ═══════════════
 S = load(todayStr());
 bindToInputs();
 wire();
