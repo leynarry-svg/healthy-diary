@@ -164,9 +164,7 @@
     </div>
     <div class="cks">
       <label><input type="checkbox" id="cFav"> ⭐ 加入常用</label>
-      <label><input type="checkbox" id="cFat"> 🛢️ 含油脂</label>
     </div>
-    <div id="fatBanner"></div>
   </div>
 </div>
 
@@ -473,16 +471,14 @@ function addCustom(){
   var q = qv===''?'适量':r2(parseFloat(qv));
   if(qv!==''&&isNaN(q)) q=qv;
   if(qv==='') u='';
-  var fav=document.getElementById('cFav').checked, fat=document.getElementById('cFat').checked;
-  if(fav) addLib(LS_F,{n:n,u:u,d:(qv===''?'适量':q),fat:fat},true);   // 只有勾了才收藏
-  if(dish>=0 && S.meals[cur][dish] && S.meals[cur][dish].sub){
+  var fav=document.getElementById('cFav').checked;
+  if(fav) addLib(LS_F,{n:n,u:u,d:(qv===''?'适量':q)},true);   // 只有勾了才收藏
+  if(dish>=0 && S.meals[cur][dish] && S.meals[cur][dish].sub)
     S.meals[cur][dish].sub.push({n:n,q:q,u:u});
-    if(fat) S.meals[cur][dish].fat=true;
-  } else {
-    S.meals[cur].push({n:n,q:q,u:u,fat:fat,m:'',free:(q==='适量')});
-  }
+  else
+    S.meals[cur].push({n:n,q:q,u:u,fat:false,m:'',free:(q==='适量')});
   document.getElementById('cName').value=''; document.getElementById('cQty').value='';
-  document.getElementById('cFav').checked=false; document.getElementById('cFat').checked=false;
+  document.getElementById('cFav').checked=false;
   renderGtabs(); after();
 }
 function bump(i,d){
@@ -513,15 +509,7 @@ function newM(i){
   addLib(LS_M,{n:n,oil:o},true);
   setM(i,n);
 }
-function after(){save();renderTabs();renderItems();renderPalette();renderFat();sums();}
-function renderFat(){
-  var n=0,oil=0;
-  for(var i=0;i<MEALS.length;i++){var l=S.meals[MEALS[i].k];
-    for(var j=0;j<l.length;j++){ if(l[j].fat)n++; var m=l[j].m?methodOf(l[j].m):null; if(m&&m.oil>0)oil++; }}
-  var e=document.getElementById('fatBanner');
-  if(n===0&&oil===0) e.innerHTML='<div class="banner bad">🔴 <b>今天还没有任何脂肪来源</b>。HDL-C 0.71 是你唯一在恶化的指标——橄榄油一勺 / 坚果20g / 牛油果半个，或者把某道菜改成炒的。</div>';
-  else e.innerHTML='<div class="banner ok">✅ 脂肪来源：'+n+' 项食材'+(oil?' + '+oil+' 道用油的菜':'')+'，方向对了。</div>';
-}
+function after(){save();renderTabs();renderItems();renderPalette();sums();}
 
 // ═══════════ 运动 ═══════════
 function renderEx(){
@@ -609,7 +597,7 @@ function renderSleep(){
   var tag=m>=450?'✅ 达标':(m>=420?'⚠️ 偏少':'🔴 严重不足');
   el.textContent='共 '+Math.floor(m/60)+'h'+(m%60<10?'0':'')+(m%60)+'min　'+tag+((mins(a)>=0&&mins(a)<360)?'　🔴 过零点':'');
 }
-function renderAll(){renderTabs();renderItems();renderGtabs();renderPalette();renderEx();renderSupp();renderPeriod();renderFat();renderSleep();sums();}
+function renderAll(){renderTabs();renderItems();renderGtabs();renderPalette();renderEx();renderSupp();renderPeriod();renderSleep();sums();}
 function clearDay(){
   if(!confirm('清空 '+S.date+' 的全部内容？（「我的常用」不会删）'))return;
   S=blank(S.date); try{localStorage.removeItem(LS+S.date);}catch(e){}
@@ -672,12 +660,14 @@ function build(){
     var v=(S.variety[m.k]||'').trim(); if(v)line+='　｜品种 '+v;
     L.push(line);
   }
-  var fats=[],oils=[];
+  // 只列出确定用了油的做法，不做「有没有脂肪源」的判断（那个交给 Claude）
+  var oils=[];
   for(var i=0;i<MEALS.length;i++){var l=S.meals[MEALS[i].k];
-    for(var j=0;j<l.length;j++){ if(l[j].fat)fats.push(fmtItem(l[j]));
-      var mm=l[j].m?methodOf(l[j].m):null; if(mm&&mm.oil>0)oils.push(l[j].n+'('+l[j].m+')'); }}
-  var fl=fats.concat(oils);
-  L.push('油 '+(fl.length?fl.join(' '):'— 🔴今天没有脂肪来源'));
+    for(var j=0;j<l.length;j++){
+      var mm=l[j].m?methodOf(l[j].m):null;
+      if(mm&&mm.oil>0) oils.push(l[j].n+'('+l[j].m+(mm.oil==2?'·多油':'·少油')+')');
+    }}
+  if(oils.length) L.push('油 '+oils.join(' '));
   if(S.supp.length){var sp=[];for(var i=0;i<S.supp.length;i++)sp.push(S.supp[i].n+(S.supp[i].d?' '+S.supp[i].d:''));L.push('药 '+sp.join('　'));}
   if(S.period) L.push('🩸 '+S.period+(S.periodDay?'（第'+S.periodDay+'天）':''));
   L.push('感 '+(S.feel.trim()||'—'));
